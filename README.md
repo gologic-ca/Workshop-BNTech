@@ -1,81 +1,54 @@
-# ![RealWorld Example App using Kotlin and Spring](example-logo.png)
+# Workshop BNTech
 
-[![Actions](https://github.com/gothinkster/spring-boot-realworld-example-app/workflows/Java%20CI/badge.svg)](https://github.com/gothinkster/spring-boot-realworld-example-app/actions)
+## Setup de l'environnement
 
-> ### Spring boot + MyBatis codebase containing real world examples (CRUD, auth, advanced patterns, etc) that adheres to the [RealWorld](https://github.com/gothinkster/realworld-example-apps) spec and API.
+### Création d'une image à partir d'un Dockerfile et démarrage du conteneur
 
-This codebase was created to demonstrate a fully fledged full-stack application built with Spring boot + Mybatis including CRUD operations, authentication, routing, pagination, and more.
+Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suivez les étapes ci-dessous :
 
-For more information on how to this works with other frontends/backends, head over to the [RealWorld](https://github.com/gothinkster/realworld) repo.
+1. Assurez-vous d'avoir Docker installé sur votre machine. Si ce n'est pas le cas, vous pouvez le télécharger et l'installer à partir du site officiel de Docker.
 
-# *NEW* GraphQL Support  
+2. Placez-vous dans le répertoire contenant le Dockerfile que vous souhaitez utiliser pour créer l'image.
 
-Following some DDD principles. REST or GraphQL is just a kind of adapter. And the domain layer will be consistent all the time. So this repository implement GraphQL and REST at the same time.
+3. Ouvrez une fenêtre de terminal ou une invite de commande et exécutez la commande suivante pour construire l'image :
 
-The GraphQL schema is https://github.com/gothinkster/spring-boot-realworld-example-app/blob/master/src/main/resources/schema/schema.graphqls and the visualization looks like below.
+    ```shell
+    docker build --pull --rm -f "dockerfile" -t workshopbntech:latest "."
+    ```
 
-![](graphql-schema.png)
+4. Une fois l'image construite, exécutez la commande suivante pour démarrer un conteneur à partir de l'image:
 
-And this implementation is using [dgs-framework](https://github.com/Netflix/dgs-framework) which is a quite new java graphql server framework.
-# How it works
+    ```shell
+    docker run -d --name workshopbntech -p 9000:9000 workshopbntech:latest
+    ```
 
-The application uses Spring Boot (Web, Mybatis).
+5. Une fois le conteneur démarré, ouvrez votre navigateur web et rendez-vous à l'adresse [http://localhost:9000](http://localhost:9000).
 
-* Use the idea of Domain Driven Design to separate the business term and infrastructure term.
-* Use MyBatis to implement the [Data Mapper](https://martinfowler.com/eaaCatalog/dataMapper.html) pattern for persistence.
-* Use [CQRS](https://martinfowler.com/bliki/CQRS.html) pattern to separate the read model and write model.
+6. Connectez-vous en utilisant les identifiants suivants : 
+   - Nom d'utilisateur : admin
+   - Mot de passe : admin
 
-And the code is organized as this:
+7. Après vous être connecté, vous serez invité à changer votre mot de passe. Suivez les instructions à l'écran pour le modifier.
 
-1. `api` is the web layer implemented by Spring MVC
-2. `core` is the business model including entities and services
-3. `application` is the high-level services for querying the data transfer objects
-4. `infrastructure`  contains all the implementation classes as the technique details
+8. Une fois connecté et votre mot de passe modifié, choisissez de créer un projet local en cliquant sur l'option correspondante.
 
-# Security
+9. Nommez le projet "Workshop-BNTech" et définissez la branche principale comme étant "master".
+    
+10. Appuyez sur "Next" et choisissez "Use global settings" dans le nouvel écran, puis cliquez sur "Create project".
 
-Integration with Spring Security and add other filter for jwt token process.
+11. Ensuite, pour la méthode d'analyse, choisissez "Locally".
 
-The secret key is stored in `application.properties`.
+12. Laissez le nom du token par défaut et choisissez "Generate".
 
-# Database
+13. Copiez le token généré et collez-le dans la propriété "sonar.token" du fichier "build.gradle" du projet.
 
-It uses a ~~H2 in-memory database~~ sqlite database (for easy local test without losing test data after every restart), can be changed easily in the `application.properties` for any other database.
+À ce stade nous avons fini de configurer notre serveur SonarQube et allons pouvoir lancer notre première analyse.
 
-# Getting started
+### Lancer une analyse sonar
 
-You'll need Java 11 installed.
+Avancer de lancer l'analyse, assurez vous que vous avec bien copié votre token sonar dans le fichier "build.gradle".
+Ensuite exécutez la commande suivante dans un terminal ouvert au niveau du projet java:
 
-    ./gradlew bootRun
-
-To test that it works, open a browser tab at http://localhost:8080/tags .  
-Alternatively, you can run
-
-    curl http://localhost:8080/tags
-
-# Try it out with [Docker](https://www.docker.com/)
-
-You'll need Docker installed.
-	
-    ./gradlew bootBuildImage --imageName spring-boot-realworld-example-app
-    docker run -p 8081:8080 spring-boot-realworld-example-app
-
-# Try it out with a RealWorld frontend
-
-The entry point address of the backend API is at http://localhost:8080, **not** http://localhost:8080/api as some of the frontend documentation suggests.
-
-# Run test
-
-The repository contains a lot of test cases to cover both api test and repository test.
-
-    ./gradlew test
-
-# Code format
-
-Use spotless for code format.
-
-    ./gradlew spotlessJavaApply
-
-# Help
-
-Please fork and PR to improve the project.
+    ```shell
+    ./gradlew test dependencyCheckAnalyze sonar
+    ```
