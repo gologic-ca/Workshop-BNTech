@@ -49,9 +49,8 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 Avant de lancer l'analyse, assurez vous que vous avec bien copié votre token sonar dans le fichier "build.gradle".
 Ensuite exécutez la commande suivante dans un terminal ouvert au niveau du projet java:
 
-    ```shell
     ./gradlew test dependencyCheckAnalyze sonar
-    ```
+
 
 L'analyse devrait prendre quelques minutes tout au plus à s'exécuter.
 Une fois faites, vous pouvez retourner sur la page "overview" de notre serveur sonar, et les données de l'analyse devraient être disponibles.
