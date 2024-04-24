@@ -1,5 +1,4 @@
-# Workshop BNTech
-
+# Workshop: Libérez-vous de la dette technique grâce à l'IA et au refactoring automatisé : cas concret avec SonarQube, GitHub Copilot et Open Rewrite
 ## Setup de l'environnement
 
 ### Création d'une image à partir d'un Dockerfile et démarrage du conteneur
