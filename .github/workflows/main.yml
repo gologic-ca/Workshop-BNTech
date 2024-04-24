@@ -16,7 +16,7 @@ jobs:
         id: pragent
         uses: Codium-ai/pr-agent@main
         env:
-          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          OPENAI_KEY: ${{ secrets.KEY }}
           OPENAI_API_TYPE: ${{ secrets.API_TYPE }}
           OPENAI_API_VERSION: ${{ secrets.API_VERSION }}
           OPENAI_API_BASE: ${{ secrets.API_BASE }}
