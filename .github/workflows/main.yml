@@ -1,0 +1,25 @@
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+jobs:
+  pr_agent_job:
+    if: ${{ github.event.sender.type != 'Bot' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+    name: Run pr agent on every pull request, respond to user comments
+    steps:
+      - name: PR Agent action step
+        id: pragent
+        uses: Codium-ai/pr-agent@main
+        env:
+          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          OPENAI_API_TYPE: ${{ secrets.API_TYPE }}
+          OPENAI_API_VERSION: ${{ secrets.API_VERSION }}
+          OPENAI_API_BASE: ${{ secrets.API_BASE }}
+          OPENAI_DEPLOYMENT_ID: ${{ secrets.DEPLOYMENT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
