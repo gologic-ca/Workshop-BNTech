@@ -55,9 +55,7 @@ cyclonedxBom {
 }
 
 rewrite {
-    activeRecipe(
-        'org.openrewrite.java.spring.UpgradeSpringBoot2To3'
-    )
+    activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2")
 }
 
 
@@ -85,6 +83,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.2.2'
+
+    rewrite("org.openrewrite.recipe:rewrite-spring:5.8.0")
 }
 
 tasks.named('test') {
