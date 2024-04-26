@@ -72,11 +72,11 @@ Vous pouvez alors build le projet en commençant par aller dans Tasks > other > 
 
 Si vous préférez utiliser le wrapper gradle en command line, assurez vous en premier que votre wrapper utilise la version 11 de java, en utilisant la commande:
     
-         ./gradlew -v
+    ./gradlew -v
 
 Si la version de la JVM n'est pas la version 11, vous pouvez la changer en modifiant soit votre JAVA_HOME dans les variables d'environnement, soit en utilisant l'argument -Dorg.gradle.java.home=/path/to/jdk11 lors de l'exécution de la commande gradlew:
     
-         ./gradlew -Dorg.gradle.java.home=/path/to/jdk11 -v
+    ./gradlew -Dorg.gradle.java.home=/path/to/jdk11 -v
 
 Ensuite, pour build le projet, exécutez la commande suivante:
 
@@ -88,3 +88,17 @@ Notre environnement est enfin prêt pour lancer la migration de notre applicatio
 La configuration de l'outil est déjà faite dans le projet, il ne reste plus qu'à lancer la migration, pour cela exécutez la commande suivante:
 
     ./gradlew rewriteRun
+
+### Build du projet après la migration
+
+Lorsque la migration a été complétée avec succès, nous allons essayer de build le projet en java 17.
+Pour cela il changer la version java de gradle en allant dans Settings > Build, Execution, Deployment > Build Tools > Gradle et en choisissant la version 17 de java.
+
+Si vous utilisez gradle en CLI, vérifier avec l'option '-v' que la version de la JVM est bien la version 17.
+
+Ensuite, exécutez spotlessJavaApply puis build depuis le plugin gradle ou utilisez la commande suivante:
+
+    ./gradlew spotlessJavaApply build
+
+Vous devriez avoir des erreurs de compilation, car la recette de migration ne peut pas corriger tous les problèmes. 
+Nous allons voir comment utiliser GitHub Copilot pour nous aider à résoudre ces problèmes.
