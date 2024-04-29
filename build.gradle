@@ -8,6 +8,7 @@ plugins {
     id "jacoco"
     id "org.owasp.dependencycheck" version '8.2.1'
     id "org.cyclonedx.bom" version '1.7.4'
+    id "org.openrewrite.rewrite" version "6.11.2"
 }
 
 version = '0.0.1-SNAPSHOT'
@@ -53,6 +54,10 @@ cyclonedxBom {
     destination = file("build/reports/sbom")
 }
 
+rewrite {
+    activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2")
+}
+
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -78,6 +83,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:2.2.2'
+
+    rewrite("org.openrewrite.recipe:rewrite-spring:5.8.0")
 }
 
 tasks.named('test') {
@@ -97,8 +104,8 @@ tasks.named('generateJava') {
 
 sonar {
     properties {
-        property "sonar.projectKey", "Workshop-BNTech"
-        property "sonar.organization", "Workshop-BNTech"
+        property "sonar.projectKey", "Workshop-dette-technique"
+        property "sonar.organization", "Workshop-dette-technique"
         property "sonar.host.url", "http://localhost:9000"
         property "sonar.token", "sqp_1af36f647da2f89630dcb0c7a25baf13b17e1a34"
         property "sonar.dependencyCheck.htmlReportPath", "${buildDir}/reports/owasp-dependencyCheck/dependency-check-report.html"

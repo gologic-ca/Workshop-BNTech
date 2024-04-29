@@ -12,13 +12,13 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 3. Ouvrez une fenêtre de terminal ou une invite de commande et exécutez la commande suivante pour construire l'image :
 
     ```shell
-    docker build --pull --rm -f "dockerfile" -t workshopbntech:latest "."
+    docker build --pull --rm -f "dockerfile" -t workshopsonar:latest "."
     ```
 
 4. Une fois l'image construite, exécutez la commande suivante pour démarrer un conteneur à partir de l'image:
 
     ```shell
-    docker run -d --name workshopbntech -p 9000:9000 workshopbntech:latest
+    docker run -d --name workshopsonar -p 9000:9000 workshopsonar:latest
     ```
 
 5. Une fois le conteneur démarré, ouvrez votre navigateur web et rendez-vous à l'adresse [http://localhost:9000](http://localhost:9000).
@@ -31,7 +31,7 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 
 8. Une fois connecté et votre mot de passe modifié, choisissez de créer un projet local en cliquant sur l'option correspondante.
 
-9. Nommez le projet "Workshop-BNTech" et définissez la branche principale comme étant "master".
+9. Nommez le projet "Workshop-dette-technique" et définissez la branche principale comme étant "master".
     
 10. Appuyez sur "Next" et choisissez "Use global settings" dans le nouvel écran, puis cliquez sur "Create project".
 
@@ -41,7 +41,7 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 
 13. Copiez le token généré et collez-le dans la propriété "sonar.token" du fichier "build.gradle" du projet.
 
-À ce stade nous avons fini de configurer notre serveur SonarQube et allons pouvoir lancer notre première analyse.
+À ce stade, nous avons fini de configurer notre serveur SonarQube et allons pouvoir lancer notre première analyse.
 
 ### Lancer une analyse sonar
 
@@ -56,3 +56,49 @@ Une fois faites, vous pouvez retourner sur la page "overview" de notre serveur s
 Vous devriez voir une page qui ressemble à celle-ci:
 
 ![Analyse Sonar](images/analyse-sonar.png)
+
+## Migration de l'application vers Springboot 3
+
+### Build du projet
+
+#### Avec le plugin gradle pour IntelliJ IDEA
+
+Pour build le projet, assurez-vous déjà que votre projet gradle utilise la version 11 de java. Pour vérifier ce paramètre dans IntelliJ IDEA, allez dans Settings > Build, Execution, Deployment > Build Tools > Gradle et assurez-vous que le JDK utilisé est le JDK 11:
+![JDK 11](images/jdk-11.png)
+
+Vous pouvez alors build le projet en commençant par aller dans Tasks > other > spotlessJavaApply pour formater le code, puis Tasks > build > build pour build le projet.
+
+#### Avec le wrapper gradle
+
+Si vous préférez utiliser le wrapper gradle en command line, assurez vous en premier que votre wrapper utilise la version 11 de java, en utilisant la commande:
+    
+    ./gradlew -v
+
+Si la version de la JVM n'est pas la version 11, vous pouvez la changer en modifiant soit votre JAVA_HOME dans les variables d'environnement, soit en utilisant l'argument -Dorg.gradle.java.home=/path/to/jdk11 lors de l'exécution de la commande gradlew:
+    
+    ./gradlew -Dorg.gradle.java.home=/path/to/jdk11 -v
+
+Ensuite, pour build le projet, exécutez la commande suivante:
+
+    ./gradlew -Dorg.gradle.java.home=/path/to/jdk11 spotlessJavaApply build
+
+### Lancer la migration
+
+Notre environnement est enfin prêt pour lancer la migration de notre application vers Springboot 3. Pour cela, nous allons utiliser OpenRewrite, un outil de refactoring automatisé qui nous permettra de migrer notre application en quelques étapes simples.
+La configuration de l'outil est déjà faite dans le projet, il ne reste plus qu'à lancer la migration, pour cela exécutez la commande suivante:
+
+    ./gradlew rewriteRun
+
+### Build du projet après la migration
+
+Lorsque la migration a été complétée avec succès, nous allons essayer de build le projet en java 17.
+Pour cela il changer la version java de gradle en allant dans Settings > Build, Execution, Deployment > Build Tools > Gradle et en choisissant la version 17 de java.
+
+Si vous utilisez gradle en CLI, vérifier avec l'option '-v' que la version de la JVM est bien la version 17.
+
+Ensuite, exécutez spotlessJavaApply puis build depuis le plugin gradle ou utilisez la commande suivante:
+
+    ./gradlew spotlessJavaApply build
+
+Vous devriez avoir des erreurs de compilation, car la recette de migration ne peut pas corriger tous les problèmes. 
+Nous allons voir comment utiliser GitHub Copilot pour nous aider à résoudre ces problèmes.
