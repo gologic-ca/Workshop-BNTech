@@ -185,12 +185,12 @@ Pour lancer une nouvelle analyse Sonar après la migration, exécutez la command
     ./gradlew test dependencyCheckAnalyze sonar
 
 Si vous allez voir le résultat de la nouvelle analyse, vous devriez voir qu'elle a échouée sur le nouveau code à cause d'une couple de code smells.\
-Pour les corriger nous allons utiliser une recette d'OpenRewrite pour appliquer les bonnes pratiques de Springboot 3.\
+Pour les corriger nous allons utiliser une recette d'OpenRewrite pour corriger les problèmes communs liés à de l'analyse statique.\
 Pour cela retirer la recette de migration de Springboot 2 à 3 des recette actives et ajouter la recette suivante dans le fichier `build.gradle`:
 
 ```groovy
 rewrite {
-   activeRecipe("org.openrewrite.java.spring.boot3.SpringBoot3BestPractices")
+   activeRecipe("org.openrewrite.staticanalysis.CommonStaticAnalysis")
 }
 ```
 
