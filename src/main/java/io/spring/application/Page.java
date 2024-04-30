@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class Page {
   private static final int MAX_LIMIT = 100;
-  private int offset = 0;
+  private int offset;
   private int limit = 20;
 
   public Page(int offset, int limit) {

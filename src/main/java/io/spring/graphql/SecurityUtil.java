@@ -13,7 +13,9 @@ public class SecurityUtil {
         || authentication.getPrincipal() == null) {
       return Optional.empty();
     }
-    io.spring.core.user.User currentUser = (io.spring.core.user.User) authentication.getPrincipal();
+    User currentUser = (User) authentication.getPrincipal();
     return Optional.of(currentUser);
   }
+
+  private SecurityUtil() {}
 }

@@ -74,7 +74,7 @@ public class UserMutation {
         || authentication.getPrincipal() == null) {
       return null;
     }
-    io.spring.core.user.User currentUser = (io.spring.core.user.User) authentication.getPrincipal();
+    User currentUser = (User) authentication.getPrincipal();
     UpdateUserParam param =
         UpdateUserParam.builder()
             .username(updateUserInput.getUsername())

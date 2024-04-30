@@ -3,6 +3,7 @@ package io.spring.infrastructure.favorite;
 import io.spring.core.favorite.ArticleFavorite;
 import io.spring.core.favorite.ArticleFavoriteRepository;
 import io.spring.infrastructure.DbTestBase;
+import io.spring.infrastructure.mybatis.mapper.ArticleFavoriteMapper;
 import io.spring.infrastructure.repository.MyBatisArticleFavoriteRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,7 @@ import org.springframework.context.annotation.Import;
 public class MyBatisArticleFavoriteRepositoryTest extends DbTestBase {
   @Autowired private ArticleFavoriteRepository articleFavoriteRepository;
 
-  @Autowired
-  private io.spring.infrastructure.mybatis.mapper.ArticleFavoriteMapper articleFavoriteMapper;
+  @Autowired private ArticleFavoriteMapper articleFavoriteMapper;
 
   @Test
   public void should_save_and_fetch_articleFavorite_success() {

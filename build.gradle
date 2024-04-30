@@ -55,7 +55,7 @@ cyclonedxBom {
 }
 
 rewrite {
-    activeRecipe("org.openrewrite.staticanalysis.CommonStaticAnalysis")
+    activeRecipe("org.openrewrite.staticanalysis.CodeCleanup")
 }
 
 
@@ -87,6 +87,7 @@ dependencies {
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 
     rewrite("org.openrewrite.recipe:rewrite-spring:5.8.0")
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis:1.5.0")
 }
 
 tasks.named('test') {

@@ -39,4 +39,6 @@ public class TestHelper {
         Arrays.asList("joda"),
         new ProfileData(user.getId(), user.getUsername(), user.getBio(), user.getImage(), false));
   }
+
+  private TestHelper() {}
 }

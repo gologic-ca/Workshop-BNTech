@@ -7,6 +7,7 @@ import com.netflix.graphql.dgs.InputArgument;
 import graphql.execution.DataFetcherResult;
 import graphql.relay.DefaultConnectionCursor;
 import graphql.relay.DefaultPageInfo;
+import graphql.relay.PageInfo;
 import io.spring.application.CommentQueryService;
 import io.spring.application.CursorPageParameter;
 import io.spring.application.CursorPager;
@@ -78,7 +79,7 @@ public class CommentDatafetcher {
               current,
               new CursorPageParameter<>(DateTimeCursor.parse(before), last, Direction.PREV));
     }
-    graphql.relay.PageInfo pageInfo = buildCommentPageInfo(comments);
+    PageInfo pageInfo = buildCommentPageInfo(comments);
     CommentsConnection result =
         CommentsConnection.newBuilder()
             .pageInfo(pageInfo)
