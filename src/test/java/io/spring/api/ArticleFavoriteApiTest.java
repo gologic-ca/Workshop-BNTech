@@ -21,7 +21,6 @@ import io.spring.core.favorite.ArticleFavoriteRepository;
 import io.spring.core.user.User;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +60,7 @@ public class ArticleFavoriteApiTest extends TestWithCurrentUser {
             1,
             article.getCreatedAt(),
             article.getUpdatedAt(),
-            article.getTags().stream().map(Tag::getName).collect(Collectors.toList()),
+            article.getTags().stream().map(Tag::getName).toList(),
             new ProfileData(
                 anotherUser.getId(),
                 anotherUser.getUsername(),

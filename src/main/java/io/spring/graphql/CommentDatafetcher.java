@@ -91,7 +91,7 @@ public class CommentDatafetcher {
                                 .cursor(a.getCursor().toString())
                                 .node(buildCommentResult(a))
                                 .build())
-                    .collect(Collectors.toList()))
+                    .toList())
             .build();
     return DataFetcherResult.<CommentsConnection>newResult()
         .data(result)

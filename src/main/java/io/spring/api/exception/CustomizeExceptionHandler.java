@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -37,7 +36,7 @@ public class CustomizeExceptionHandler extends ResponseEntityExceptionHandler {
                         fieldError.getField(),
                         fieldError.getCode(),
                         fieldError.getDefaultMessage()))
-            .collect(Collectors.toList());
+            .toList();
 
     ErrorResource error = new ErrorResource(errorResources);
 
@@ -74,7 +73,7 @@ public class CustomizeExceptionHandler extends ResponseEntityExceptionHandler {
                         fieldError.getField(),
                         fieldError.getCode(),
                         fieldError.getDefaultMessage()))
-            .collect(Collectors.toList());
+            .toList();
 
     return ResponseEntity.status(UNPROCESSABLE_ENTITY).body(new ErrorResource(errorResources));
   }

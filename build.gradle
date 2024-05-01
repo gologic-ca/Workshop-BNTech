@@ -8,7 +8,6 @@ plugins {
     id "jacoco"
     id "org.owasp.dependencycheck" version '8.2.1'
     id "org.cyclonedx.bom" version '1.7.4'
-    id "org.openrewrite.rewrite" version "6.11.2"
 }
 
 version = '0.0.1-SNAPSHOT'
@@ -54,10 +53,6 @@ cyclonedxBom {
     destination = file("build/reports/sbom")
 }
 
-rewrite {
-    activeRecipe("org.openrewrite.staticanalysis.CodeCleanup")
-}
-
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -73,6 +68,7 @@ dependencies {
                 'io.jsonwebtoken:jjwt-jackson:0.11.2'
     implementation 'joda-time:joda-time:2.10.13'
     implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -85,9 +81,6 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
-
-    rewrite("org.openrewrite.recipe:rewrite-spring:5.8.0")
-    rewrite("org.openrewrite.recipe:rewrite-static-analysis:1.5.0")
 }
 
 tasks.named('test') {

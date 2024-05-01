@@ -1,7 +1,5 @@
 package io.spring.core.article;
 
-import static java.util.stream.Collectors.toList;
-
 import io.spring.Util;
 import java.util.HashSet;
 import java.util.List;
@@ -42,7 +40,7 @@ public class Article {
     this.title = title;
     this.description = description;
     this.body = body;
-    this.tags = new HashSet<>(tagList).stream().map(Tag::new).collect(toList());
+    this.tags = new HashSet<>(tagList).stream().map(Tag::new).toList();
     this.userId = userId;
     this.createdAt = createdAt;
     this.updatedAt = createdAt;

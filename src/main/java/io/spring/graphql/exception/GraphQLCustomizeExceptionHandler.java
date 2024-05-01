@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,14 +39,12 @@ public class GraphQLCustomizeExceptionHandler implements DataFetcherExceptionHan
               .build();
       return CompletableFuture.completedFuture(
           DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build());
-    } else if (handlerParameters.getException() instanceof ConstraintViolationException) {
-      List<FieldErrorResource> errors = new ArrayList<>();
-      for (ConstraintViolation<?> violation :
-          ((ConstraintViolationException) handlerParameters.getException())
-              .getConstraintViolations()) {
-        FieldErrorResource fieldErrorResource =
-            new FieldErrorResource(
-                violation.getRootBeanClass().getName(),
+    } else if (handlerParameters.getException() instanceof ConstraintViolationException cve) {
+  List<FieldErrorResource> errors = new ArrayList<>();
+  for (ConstraintViolation<?> violation : cve.getConstraintViolations()) {
+    FieldErrorResource fieldErrorResource =
+        new FieldErrorResource(
+            violation.getRootBeanClass().getName(),
                 getParam(violation.getPropertyPath().toString()),
                 violation
                     .getConstraintDescriptor()
@@ -91,7 +88,7 @@ public class GraphQLCustomizeExceptionHandler implements DataFetcherExceptionHan
     List<ErrorItem> errorItems =
         errorMap.entrySet().stream()
             .map(kv -> ErrorItem.newBuilder().key(kv.getKey()).value(kv.getValue()).build())
-            .collect(Collectors.toList());
+            .toList();
     return Error.newBuilder().message("BAD_REQUEST").errors(errorItems).build();
   }
 

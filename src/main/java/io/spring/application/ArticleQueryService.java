@@ -1,7 +1,5 @@
 package io.spring.application;
 
-import static java.util.stream.Collectors.toList;
-
 import io.spring.application.data.ArticleData;
 import io.spring.application.data.ArticleDataList;
 import io.spring.application.data.ArticleFavoriteCount;
@@ -134,9 +132,7 @@ public class ArticleQueryService {
     Set<String> followingAuthors =
         userRelationshipQueryService.followingAuthors(
             currentUser.getId(),
-            articles.stream()
-                .map(articleData1 -> articleData1.getProfileData().getId())
-                .collect(toList()));
+            articles.stream().map(articleData1 -> articleData1.getProfileData().getId()).toList());
     articles.forEach(
         articleData -> {
           if (followingAuthors.contains(articleData.getProfileData().getId())) {
@@ -148,7 +144,7 @@ public class ArticleQueryService {
   private void setFavoriteCount(List<ArticleData> articles) {
     List<ArticleFavoriteCount> favoritesCounts =
         articleFavoritesReadService.articlesFavoriteCount(
-            articles.stream().map(ArticleData::getId).collect(toList()));
+            articles.stream().map(ArticleData::getId).toList());
     Map<String, Integer> countMap = new HashMap<>();
     favoritesCounts.forEach(
         item -> {
@@ -161,8 +157,7 @@ public class ArticleQueryService {
   private void setIsFavorite(List<ArticleData> articles, User currentUser) {
     Set<String> favoritedArticles =
         articleFavoritesReadService.userFavorites(
-            articles.stream().map(articleData -> articleData.getId()).collect(toList()),
-            currentUser);
+                articles.stream().map(ArticleData::getId).toList(), currentUser);
 
     articles.forEach(
         articleData -> {
