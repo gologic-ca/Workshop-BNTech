@@ -113,5 +113,6 @@ sonar {
         property "sonar.token", "sqp_1af36f647da2f89630dcb0c7a25baf13b17e1a34"
         property "sonar.dependencyCheck.htmlReportPath", "${buildDir}/reports/owasp-dependencyCheck/dependency-check-report.html"
         property "sonar.dependencyCheck.jsonReportPath", "${buildDir}/reports/owasp-dependencyCheck/dependency-check-report.json"
+        property "sonar.coverage.exclusions", "src/main/java/io/spring/graphql/**/*"
     }
 }
