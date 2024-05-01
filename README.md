@@ -23,7 +23,7 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 
 5. Une fois le conteneur démarré, ouvrez votre navigateur web et rendez-vous à l'adresse [http://localhost:9000](http://localhost:9000).
 
-6. Connectez-vous en utilisant les identifiants suivants : 
+6. Connectez-vous en utilisant les identifiants suivants :
    - Nom d'utilisateur : admin
    - Mot de passe : admin
 
@@ -32,7 +32,7 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 8. Une fois connecté et votre mot de passe modifié, choisissez de créer un projet local en cliquant sur l'option correspondante.
 
 9. Nommez le projet "Workshop-dette-technique" et définissez la branche principale comme étant "master".
-    
+
 10. Appuyez sur "Next" et choisissez "Use global settings" dans le nouvel écran, puis cliquez sur "Create project".
 
 11. Ensuite, pour la méthode d'analyse, choisissez "Locally".
@@ -71,11 +71,11 @@ Vous pouvez alors build le projet en commençant par aller dans Tasks > other > 
 #### Avec le wrapper gradle
 
 Si vous préférez utiliser le wrapper gradle en command line, assurez vous en premier que votre wrapper utilise la version 11 de java, en utilisant la commande:
-    
+
     ./gradlew -v
 
 Si la version de la JVM n'est pas la version 11, vous pouvez la changer en modifiant soit votre JAVA_HOME dans les variables d'environnement, soit en utilisant l'argument -Dorg.gradle.java.home=/path/to/jdk11 lors de l'exécution de la commande gradlew:
-    
+
     ./gradlew -Dorg.gradle.java.home=/path/to/jdk11 -v
 
 Ensuite, pour build le projet, exécutez la commande suivante:
@@ -100,5 +100,130 @@ Ensuite, exécutez spotlessJavaApply puis build depuis le plugin gradle ou utili
 
     ./gradlew spotlessJavaApply build
 
-Vous devriez avoir des erreurs de compilation, car la recette de migration ne peut pas corriger tous les problèmes. 
-Nous allons voir comment utiliser GitHub Copilot pour nous aider à résoudre ces problèmes.
+Vous devriez avoir des erreurs de compilation, car la recette de migration ne peut pas corriger tous les problèmes.
+Pour corriger ces erreurs, nos essais avec Github Copilot n'ont pas été concluants, principalement parce que le modèle utilisé en arrière a été entrainé avant que Springboot 3 ne soit sorti.
+Nous allons donc devoir corriger ces erreurs manuellement.
+
+#### CustomizeExceptionHandler.java
+
+Dans le fichier `CustomizeExceptionHandler.java`, nous avons une erreur de compilation à la ligne 62. Pour corriger cette erreur, remplacez la ligne 62 par la ligne suivante:
+
+```java
+  @Override
+  protected ResponseEntity<Object> handleMethodArgumentNotValid(
+      MethodArgumentNotValidException e,
+      HttpHeaders headers,
+      HttpStatusCode status,
+      WebRequest request) {
+```
+N'oubliez pas d'importer `org.springframework.http.HttpStatusCode;`
+
+#### WebSecurityConfig.java
+
+Dans le fichier `WebSecurityConfig.java`, nous avons une erreur de compilation à la ligne 39. Pour corriger cette erreur, remplacez la ligne 39 par la ligne suivante:
+
+```java
+  http.csrf(AbstractHttpConfigurer::disable)
+```
+
+Il faudra également importer `org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer`\
+Et retirer une parenthèse à la ligne 60:
+
+```java
+  .authenticated());
+```
+
+#### GraphQLCustomizeExceptionHandler.java
+
+Dans le fichier `GraphQLCustomizeExceptionHandler.java`, nous avons une erreur de compilation à la ligne 31. Pour corriger cette erreur, remplacez la ligne 31 par la ligne suivante:
+
+```java
+  public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(
+```
+
+Importez les classe manquantes `java.util.concurrent.CompletableFuture`.\
+Il nous faudra aussi modifier tous les retours de méthode de `DataFetcherExceptionHandler` pour retourner un `CompletableFuture<DataFetcherExceptionHandlerResult>`:
+
+ ```java
+    return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build());
+ ```
+Pour les lignes 41 et 65 et:
+
+```java
+    return CompletableFuture.completedFuture(defaultHandler.onException(handlerParameters));
+```
+
+Pour la ligne 67.
+
+#### Mise à jour de spotless
+
+Enfin nous devons mettre à jour le plugin spotless pour fonctionner avec java 17. Changer la version du plugin pour celle-ci:
+
+```groovy
+id "com.diffplug.spotless" version "6.25.0"
+```
+
+#### Correction des tests
+
+Si vous lancez un build à ce stade vous devriez avoir des erreurs lors de l'exécution des tests. Nous allons devoir mettre plusieurs dépendances à jour:
+
+ ```groovy
+ implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+ testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+testImplementation 'io.rest-assured:rest-assured:5.4.0'
+testImplementation 'io.rest-assured:json-path:5.4.0'
+testImplementation 'io.rest-assured:xml-path:5.4.0'
+testImplementation 'io.rest-assured:spring-mock-mvc:5.4.0'
+```
+
+Avec ces changements vous devriez pouvoir build le projet sans erreurs.
+
+### Analyse Sonar post migration
+
+Pour lancer une nouvelle analyse Sonar après la migration, exécutez la commande suivante:
+
+    ./gradlew test dependencyCheckAnalyze sonar
+
+Si vous allez voir le résultat de la nouvelle analyse, vous devriez voir qu'elle a échouée sur le nouveau code à cause de nombreux problèmes de sécurité et d'une couple de code smells.\
+Pour les problèmes de sécurité dans les dépendances, on observe qu'elles viennent toute du plugin 'openrewrite-gradle-plugin' qui est utilisé pour la migration.\
+Maintenant que nous avons fait la migration, nous pouvons retirer ce plugin du projet.\
+Pour cela, ouvrez le fichier `build.gradle` et retirez la ligne suivante:
+
+```groovy
+    id "org.openrewrite.rewrite" version "7.8.0"
+```
+Ainsi que toutes les recettes actives, et dans les dépendances retirez:
+
+```groovy  
+    rewrite("org.openrewrite.recipe:rewrite-spring:5.8.0")
+```
+
+Il restera encore une vulnérabilité, liée à une dépendance de dépendance qui est jackson-databind.\
+Pour corriger cette vulnérabilité, nous allons mettre à jour la version de jackson-databind dans le fichier `build.gradle`, dans la section dependencies:
+
+```groovy
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+```
+
+Pour ce qui est des code smells, nous allons les corriger manuellement, ainsi qu'avec l'aide de Github Copilot.
+
+##### Utilisation des collectors
+
+Nous allons remplacer l'utilisation de `Stream.collect(Collectors.toList())` par `Stream.toList()` dans l'ensemble du projet.\
+Pour cela, faites une recherche dans l'ensemble du projet (Ctrl+Shift+F) pour `collect(Collectors.toList())` et `collect(toList())` et remplacez les par `toList()`.
+Si vous relancez une analyse Sonar, vous devriez voir que le code smell a été corrigé.
+
+##### Utilisation des références de méthode dans les lambdas
+
+Si vous allez dans la classe `ArticleQueryService.java` vous devriez voir un code smell sur la ligne 160.\
+IntelliJ nous propose une correction rapide, vous pour l'appliquer en appuyant sur `Ctrl+Alt+Enter` ou en maintenant votre souris sur le code souligné et en choisissant la première option.
+
+##### Utilisation de 'instanceof'
+
+Dans la classe `GraphQLCustomizeExceptionHandler.java`, vous devriez voir un code smell sur la ligne 42.\
+Pour ce code smell, il n'y a pas de correction rapide disponible, pour l'exercice nous allons utiliser Github Copilot.\
+Pour cela, ouvrez le chat de Github Copilot et demandez lui un fix pour la description du code smell, par exemple:
+
+    /fix Replace this instanceof check and cast with 'instanceof ConstraintViolationException constraintviolationexception' Only generate the snippet
+
+Il vous proposera alors un code de correction que vous pourrez copier coller dans votre IDE, en validant que la solution proposée est correcte.
