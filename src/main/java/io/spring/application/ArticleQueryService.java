@@ -52,13 +52,13 @@ public class ArticleQueryService {
   }
 
   public CursorPager<ArticleData> findRecentArticlesWithCursor(
-      String tag,
-      String author,
-      String favoritedBy,
-      CursorPageParameter<DateTime> page,
-      User currentUser) {
+          String tag,
+          String author,
+          String favoritedBy,
+          CursorPageParameter<DateTime> page,
+          User currentUser) {
     List<String> articleIds =
-        articleReadService.findArticlesWithCursor(tag, author, favoritedBy, page);
+            articleReadService.findArticlesWithCursor(tag, author, favoritedBy, page);
     if (articleIds.size() == 0) {
       return new CursorPager<>(new ArrayList<>(), page.getDirection(), false);
     } else {
@@ -78,13 +78,13 @@ public class ArticleQueryService {
   }
 
   public CursorPager<ArticleData> findUserFeedWithCursor(
-      User user, CursorPageParameter<DateTime> page) {
+          User user, CursorPageParameter<DateTime> page) {
     List<String> followdUsers = userRelationshipQueryService.followedUsers(user.getId());
     if (followdUsers.size() == 0) {
       return new CursorPager<>(new ArrayList<>(), page.getDirection(), false);
     } else {
       List<ArticleData> articles =
-          articleReadService.findArticlesOfAuthorsWithCursor(followdUsers, page);
+              articleReadService.findArticlesOfAuthorsWithCursor(followdUsers, page);
       boolean hasExtra = articles.size() > page.getLimit();
       if (hasExtra) {
         articles.remove(page.getLimit());
@@ -116,30 +116,39 @@ public class ArticleQueryService {
       return new ArticleDataList(new ArrayList<>(), 0);
     } else {
       List<ArticleData> articles = articleReadService.findArticlesOfAuthors(followdUsers, page);
+
+      List<String> articleIds = new ArrayList<>();
+
+      for (ArticleData articleData : articles) {
+        articleIds.add(articleData.getId());
+      }
+
       List<ArticleFavoriteCount> favoritesCounts =
-              articleFavoritesReadService.articlesFavoriteCount(
-                      articles.stream().map(ArticleData::getId).collect(toList()));
+              articleFavoritesReadService.articlesFavoriteCount(articleIds);
       Map<String, Integer> countMap = new HashMap<>();
-      favoritesCounts.forEach(
-              item -> {
-                countMap.put(item.getId(), item.getCount());
-              });
-      articles.forEach(
-              articleData -> articleData.setFavoritesCount(countMap.get(articleData.getId())));
+      for (ArticleFavoriteCount item : favoritesCounts) {
+        countMap.put(item.getId(), item.getCount());
+      }
+      for (ArticleData articleData : articles) {
+        articleData.setFavoritesCount(countMap.get(articleData.getId()));
+      }
       if (user != null) {
         setIsFavorite(articles, user);
+
+        List<String> profileDataIds = new ArrayList<>();
+        for (ArticleData articleData : articles) {
+          if(articleData.getProfileData() != null) {
+            profileDataIds.add(articleData.getProfileData().getId());
+          }
+        }
+
         Set<String> followingAuthors =
-                userRelationshipQueryService.followingAuthors(
-                        user.getId(),
-                        articles.stream()
-                                .map(articleData1 -> articleData1.getProfileData().getId())
-                                .collect(toList()));
-        articles.forEach(
-                articleData -> {
-                  if (followingAuthors.contains(articleData.getProfileData().getId())) {
-                    articleData.getProfileData().setFollowing(true);
-                  }
-                });
+                userRelationshipQueryService.followingAuthors(user.getId(), profileDataIds);
+        for (ArticleData articleData : articles) {
+          if (followingAuthors.contains(articleData.getProfileData().getId())) {
+            articleData.getProfileData().setFollowing(true);
+          }
+        }
       }
       int count = articleReadService.countFeedSize(followdUsers);
       return new ArticleDataList(articles, count);
