@@ -116,7 +116,31 @@ public class ArticleQueryService {
       return new ArticleDataList(new ArrayList<>(), 0);
     } else {
       List<ArticleData> articles = articleReadService.findArticlesOfAuthors(followdUsers, page);
-      fillExtraInfo(articles, user);
+      List<ArticleFavoriteCount> favoritesCounts =
+              articleFavoritesReadService.articlesFavoriteCount(
+                      articles.stream().map(ArticleData::getId).collect(toList()));
+      Map<String, Integer> countMap = new HashMap<>();
+      favoritesCounts.forEach(
+              item -> {
+                countMap.put(item.getId(), item.getCount());
+              });
+      articles.forEach(
+              articleData -> articleData.setFavoritesCount(countMap.get(articleData.getId())));
+      if (user != null) {
+        setIsFavorite(articles, user);
+        Set<String> followingAuthors =
+                userRelationshipQueryService.followingAuthors(
+                        user.getId(),
+                        articles.stream()
+                                .map(articleData1 -> articleData1.getProfileData().getId())
+                                .collect(toList()));
+        articles.forEach(
+                articleData -> {
+                  if (followingAuthors.contains(articleData.getProfileData().getId())) {
+                    articleData.getProfileData().setFollowing(true);
+                  }
+                });
+      }
       int count = articleReadService.countFeedSize(followdUsers);
       return new ArticleDataList(articles, count);
     }
