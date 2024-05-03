@@ -7,7 +7,7 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 
 1. Assurez-vous d'avoir Docker installé sur votre machine. Si ce n'est pas le cas, vous pouvez le télécharger et l'installer à partir du site officiel de Docker.
 
-2. Placez-vous dans le répertoire contenant le Dockerfile que vous souhaitez utiliser pour créer l'image.
+2. Placez-vous dans le répertoire /sonar qui contient le Dockerfile que vous souhaitez utiliser pour créer l'image.
 
 3. Ouvrez une fenêtre de terminal ou une invite de commande et exécutez la commande suivante pour construire l'image :
 
