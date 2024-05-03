@@ -1,6 +1,38 @@
 # Workshop: Libérez-vous de la dette technique grâce à l'IA et au refactoring automatisé : cas concret avec SonarQube, GitHub Copilot et Open Rewrite
 ## Setup de l'environnement
 
+## Étape 0: Prérequis
+Cette étape est destinée à vous aider à préparer votre environnement pour le workshop. Vous aurez besoin de:
+- Un IDE Java (IntelliJ IDEA ou VsCode)
+- Java 17 
+- Plugin Sonarlint
+- GitHub Copilot
+
+Il est nécessaire de remplaçer de mettre dans la variable d'environnement JAVA_HOME le chemin vers le JDK 17.
+
+Pour mac, linux ou gitbash:
+```shell
+export JAVA_HOME=/path/to/jdk17
+```
+
+Pour cmd sur windows:
+```shell
+set JAVA_HOME=C:\path\to\jdk17
+```
+
+Valider la version de gradle et du JDK utilisé par le projet en exécutant la commande suivante:
+```shell
+./gradlew -v
+```
+
+Par la suite, vous devez exécuter la commande: 
+
+```shell
+./gradlew clean build
+```
+
+Vous voila ainsi prêt pour le workshop.
+
 ### Création d'une image à partir d'un Dockerfile et démarrage du conteneur
 
 Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suivez les étapes ci-dessous :
