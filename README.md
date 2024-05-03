@@ -12,7 +12,7 @@ Pour créer une image à partir d'un Dockerfile et démarrer un conteneur, suive
 3. Ouvrez une fenêtre de terminal ou une invite de commande et exécutez la commande suivante pour construire l'image :
 
     ```shell
-    docker build --pull --rm -f "dockerfile" -t workshopsonar:latest "."
+    docker build --pull --rm -t workshopsonar:latest "."
     ```
 
 4. Une fois l'image construite, exécutez la commande suivante pour démarrer un conteneur à partir de l'image:
