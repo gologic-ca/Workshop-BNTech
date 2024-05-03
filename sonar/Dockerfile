@@ -5,7 +5,7 @@ FROM sonarqube:latest
 VOLUME /opt/sonarqube/extensions/plugins
 
 # Copiez le fichier sonar-config.properties dans le conteneur
-COPY sonar/sonar-config.properties /opt/sonarqube/conf/sonar.properties
+COPY sonar-config.properties /opt/sonarqube/conf/sonar.properties
 
 # Installez le plugin dependency-check
 RUN wget -O /opt/sonarqube/extensions/plugins/sonar-dependency-check-plugin.jar \
