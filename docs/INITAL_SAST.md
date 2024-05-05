@@ -61,7 +61,7 @@ L'analyse devrait prendre quelques minutes tout au plus à s'exécuter.
 Une fois faites, vous pouvez retourner sur la page "overview" de notre serveur sonar, et les données de l'analyse devraient être disponibles.
 Vous devriez voir une page qui ressemble à celle-ci:
 
-![Analyse Sonar](images/analyse-sonar.png)
+![Analyse Sonar](analyse-sonar.png)
 
 ## Félicication !
 
