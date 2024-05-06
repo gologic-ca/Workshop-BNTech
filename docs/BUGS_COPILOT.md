@@ -78,4 +78,4 @@ Sur le projet, sélectionnez `Analyze->Inspect Code`, dans le résultat naviguez
 
 ## Félicitation !
 
-La dette technique et la qualité est améliorée, vous voila ainsi prêt pour passer à la dernière étape: [Mise en place de la méthode "Clean as you code"](docs/CAYC.md)
+La dette technique et la qualité est améliorée, vous voila ainsi prêt pour passer à la dernière étape: [Mise en place de la méthode "Clean as you code"](CAYC.md)
