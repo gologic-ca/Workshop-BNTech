@@ -2,23 +2,6 @@
 
 ## Migration automatisé avec OpenRewrite vers Springboot 3.x
 
-### Build du projet avec le wrapper gradle
-
-Ce projet compile au complet avec le JDK 11, vous devez donc changer la variable d'environnement de JAVA pour pointer vers la JDK11:
-
-```
-set JAVA_HOME=/path/to/jdk11
-./gradlew -v
-```
-
-Ensuite compilez le projet avec la commande suivante:
-
-```
-./gradlew clean build
-```
-
-### Lancer la migration
-
 Notre environnement est enfin prêt pour lancer la migration de notre application vers Springboot 3. Pour cela, nous allons utiliser OpenRewrite, un outil de refactoring automatisé qui nous permettra de migrer notre application en quelques étapes simples.
 
 La configuration de l'outil est déjà faite dans le projet avec le plugin OpenRewrite dans le build.gradle en spécifiant la recette suivante à appliquer: 
@@ -37,16 +20,9 @@ Déclenchez la tâche de migration en exécutant la tâche suivante:
 
 ### Build du projet après la migration
 
-Lorsque la migration a été complétée avec succès, nous allons essayer de build le projet en java 17.
+Lorsque la migration a été complétée avec succès, nous allons essayer de build le projet migré vers Springboot 3.
 
-Pour cela vous devez faire évoluer la version java de gradle:
-
-```
-set JAVA_HOME=/path/to/jdk17
-./gradlew -v
-```
-
-Ensuite compilez le projet avec la commande suivante:
+Pour cela exécutez la commande suivante:
 
 ```
 ./gradlew clean build
