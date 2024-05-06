@@ -204,4 +204,4 @@ Vous devriez voir une page qui ressemble à celle-ci:
 
 ## Félicitation !
 
-Vous voila ainsi prêt pour améliorer les standards de qualité du code en passant à la prochaine étape: [Qualité du code avec GitHub Copilot](docs/BUGS_COPILOT.md)
+Vous voila ainsi prêt pour améliorer les standards de qualité du code en passant à la prochaine étape: [Qualité du code avec GitHub Copilot](BUGS_COPILOT.md)
