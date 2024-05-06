@@ -2,12 +2,17 @@
 
 ## Fixer la migration avec GitHub Copilot
 
-Pour corriger ces erreurs, nos essais avec Github Copilot n'ont pas été concluants, principalement parce que le modèle utilisé en arrière a été entrainé avant que Springboot 3 ne soit sorti.
-Nous allons donc devoir corriger ces erreurs manuellement.
+Dans cette partie de l'atelier, vous allez corriger les erreurs de migration en utilisant les capacités de l'assistant AI Github Copilot directement dans l'IDE  IntelliJ.
 
-#### CustomizeExceptionHandler.java
+Certaines corrections seront plus complexes que d'autres étant donné que les données de GitHub Copilot n'inclut pas encore les données des versions de SpringBoot 3.x.
 
-Dans le fichier `CustomizeExceptionHandler.java`, nous avons une erreur de compilation à la ligne 62. Pour corriger cette erreur, remplacez la ligne 62 par la ligne suivante:
+### io.spring.api.exception.CustomizeExceptionHandler
+
+Localisez la classe `CustomizeExceptionHandler` et déplacez-vous à la ligne 62.
+
+Dans ce fichier les recettes de migration OpenRewrite n'ont pas mise à jour l'objet `HttpStatus` par `HttpStatusCode` (une mise à jour est en cours de discussion sur les forums: https://github.com/openrewrite/rewrite-spring/issues/369).
+
+Vous pouvez donc remplacer la signature de la méthode par celle-ci: 
 
 ```java
   @Override
@@ -17,72 +22,186 @@ Dans le fichier `CustomizeExceptionHandler.java`, nous avons une erreur de compi
       HttpStatusCode status,
       WebRequest request) {
 ```
-N'oubliez pas d'importer `org.springframework.http.HttpStatusCode;`
 
-#### WebSecurityConfig.java
+Important: N'oubliez pas d'importer `import org.springframework.http.HttpStatusCode;`
 
-Dans le fichier `WebSecurityConfig.java`, nous avons une erreur de compilation à la ligne 39. Pour corriger cette erreur, remplacez la ligne 39 par la ligne suivante:
+### io.spring.api.security.WebSecurityConfig#filterChain
 
-```java
-  http.csrf(AbstractHttpConfigurer::disable)
-```
+Localisez la classe `WebSecurityConfig` et déplacez-vous à la ligne 37.
 
-Il faudra également importer `org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer`\
-Et retirer une parenthèse à la ligne 60:
+Dans la méthode `SecurityFilterChain filterChain(HttpSecurity http)`, l'erreur de compilation indique `Cannot resolve method 'cors' in 'CsrfConfigurer'`, dans ce cas d'erreur, vous pouvez sélectionner la méthode au complet et avec le bouton droit, sélectionnez dans le menu contextuel `GitHub Copilot->Fix This`.
+La fenêtre de discussion avec Copilot va vous proposer une solution pour corriger cette erreur. 
 
-```java
-  .authenticated());
-```
+L'assistant devrait vous proposer une solution pour inverser les appels à Cors par rapport à Csrf soit la réponse ci-dessous: 
 
-#### GraphQLCustomizeExceptionHandler.java
+> Problem 1: Misplaced method calls in the CSRF configuration. The methods cors, authenticationEntryPoint, sessionCreationPolicy, and requestMatchers are being called in the wrong context. They should be called directly on the http object, not within the csrf configuration.
 
-Dans le fichier `GraphQLCustomizeExceptionHandler.java`, nous avons une erreur de compilation à la ligne 31. Pour corriger cette erreur, remplacez la ligne 31 par la ligne suivante:
+**Attention: la solution proposée se base encore sur SpringBoot 2.x comme `requests.antMatchers` alors il faut seulement prendre le début de la proposition se basant vraiment sur le remplacement de `http.cors` et ajuster les parenthèses à la fin.**
+
+Vous pouvez suivre sa proposition ou directement remplacez la méthode par ce contenu: 
 
 ```java
-  public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(
+  @Bean
+  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.cors(withDefaults())
+            .csrf(csrf -> csrf.disable())
+            .exceptionHandling(handling -> handling
+                    .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            .sessionManagement(management -> management
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(requests -> requests
+            .requestMatchers(HttpMethod.OPTIONS).permitAll()
+            .requestMatchers("/graphiql").permitAll()
+            .requestMatchers("/graphql").permitAll()
+            .requestMatchers(HttpMethod.GET, "/articles/feed").authenticated()
+            .requestMatchers(HttpMethod.POST, "/users", "/users/login").permitAll()
+            .requestMatchers(HttpMethod.GET, "/articles/**", "/profiles/**", "/tags").permitAll()
+            .anyRequest().authenticated());
+
+    http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+  }
 ```
 
-Importez les classe manquantes `java.util.concurrent.CompletableFuture`.\
-Il nous faudra aussi modifier tous les retours de méthode de `DataFetcherExceptionHandler` pour retourner un `CompletableFuture<DataFetcherExceptionHandlerResult>`:
+### io.spring.graphql.exception.GraphQLCustomizeExceptionHandler
 
- ```java
-    return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build());
- ```
-Pour les lignes 41 et 65 et:
+Localisez la classe `GraphQLCustomizeExceptionHandler` et déplacez vous à la ligne 30.
+
+La méthode `onException` ne surcharge plus la méthode de `DataFetcherExceptionHandler`, alors vous allez combiner IntelliJ avec GitHub Copilot pour régler cette erreur.
+
+Pressez Ctrl+I et sélectionner la nouvelle version de la méthode à surcharger: `handleException`.
+
+Remplacez le contenu de l'ancienne méthode dans la nouvelle version, vous devriez avoir une méthode avec ce contenu: 
 
 ```java
-    return CompletableFuture.completedFuture(defaultHandler.onException(handlerParameters));
+@Override
+  public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters handlerParameters) {
+    if (handlerParameters.getException() instanceof InvalidAuthenticationException) {
+      GraphQLError graphqlError =
+              TypedGraphQLError.newBuilder()
+                      .errorType(ErrorType.UNAUTHENTICATED)
+                      .message(handlerParameters.getException().getMessage())
+                      .path(handlerParameters.getPath())
+                      .build();
+      return DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build();
+    } else if (handlerParameters.getException() instanceof ConstraintViolationException) {
+      List<FieldErrorResource> errors = new ArrayList<>();
+      for (ConstraintViolation<?> violation :
+              ((ConstraintViolationException) handlerParameters.getException())
+                      .getConstraintViolations()) {
+        FieldErrorResource fieldErrorResource =
+                new FieldErrorResource(
+                        violation.getRootBeanClass().getName(),
+                        getParam(violation.getPropertyPath().toString()),
+                        violation
+                                .getConstraintDescriptor()
+                                .getAnnotation()
+                                .annotationType()
+                                .getSimpleName(),
+                        violation.getMessage());
+        errors.add(fieldErrorResource);
+      }
+      GraphQLError graphqlError =
+              TypedGraphQLError.newBadRequestBuilder()
+                      .message(handlerParameters.getException().getMessage())
+                      .path(handlerParameters.getPath())
+                      .extensions(errorsToMap(errors))
+                      .build();
+      return DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build();
+    } else {
+      return defaultHandler.onException(handlerParameters);
+    }
+  }
 ```
 
-Pour la ligne 67.
+Le code ne compile toujours pas car la signature de la méthode a changé, utilisez l'assistant GitHub Copilot pour vous proposer une solution en sélectionnant la méthode et en choisissant dans le menu contextuel `GitHub Copilot->Fix this`. 
 
-#### Mise à jour de spotless
+L'assistant devrait vous proposer une solution pour ajuster les retours de fonction soit la réponse ci-dessous: 
 
-Enfin nous devons mettre à jour le plugin spotless pour fonctionner avec java 17. Changer la version du plugin pour celle-ci:
+> Problem 1: Incorrect return type in handleException method. The handleException method in the GraphQLCustomizeExceptionHandler class is expected to return a CompletableFuture<DataFetcherExceptionHandlerResult>, but currently it's returning DataFetcherExceptionHandlerResult.
 
-```groovy
-id "com.diffplug.spotless" version "6.25.0"
+Vous pouvez suivre sa proposition ou directement remplacez la méthode par ce contenu: 
+
+```java 
+@Override
+  public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters handlerParameters) {
+    if (handlerParameters.getException() instanceof InvalidAuthenticationException) {
+      GraphQLError graphqlError =
+              TypedGraphQLError.newBuilder()
+                      .errorType(ErrorType.UNAUTHENTICATED)
+                      .message(handlerParameters.getException().getMessage())
+                      .path(handlerParameters.getPath())
+                      .build();
+      return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build());
+    } else if (handlerParameters.getException() instanceof ConstraintViolationException) {
+      List<FieldErrorResource> errors = new ArrayList<>();
+      for (ConstraintViolation<?> violation :
+              ((ConstraintViolationException) handlerParameters.getException())
+                      .getConstraintViolations()) {
+        FieldErrorResource fieldErrorResource =
+                new FieldErrorResource(
+                        violation.getRootBeanClass().getName(),
+                        getParam(violation.getPropertyPath().toString()),
+                        violation
+                                .getConstraintDescriptor()
+                                .getAnnotation()
+                                .annotationType()
+                                .getSimpleName(),
+                        violation.getMessage());
+        errors.add(fieldErrorResource);
+      }
+      GraphQLError graphqlError =
+              TypedGraphQLError.newBadRequestBuilder()
+                      .message(handlerParameters.getException().getMessage())
+                      .path(handlerParameters.getPath())
+                      .extensions(errorsToMap(errors))
+                      .build();
+      return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(graphqlError).build());
+    } else {
+      return CompletableFuture.completedFuture(defaultHandler.onException(handlerParameters));
+    }
+  }
 ```
 
-#### Correction des tests
+**Attention: n'oubliez pas de supprimer l'ancienne méthode `public DataFetcherExceptionHandlerResult onException` !**
 
-Si vous lancez un build à ce stade vous devriez avoir des erreurs lors de l'exécution des tests. Nous allons devoir mettre plusieurs dépendances à jour:
+### Correction des tests
 
- ```groovy
- implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
- testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
-testImplementation 'io.rest-assured:rest-assured:5.4.0'
-testImplementation 'io.rest-assured:json-path:5.4.0'
-testImplementation 'io.rest-assured:xml-path:5.4.0'
-testImplementation 'io.rest-assured:spring-mock-mvc:5.4.0'
+À cette étape, si vous lancez un build, vous devriez avoir des erreurs lors de l'exécution des tests. 
+
+Malheureusement, GitHub Copilot ne peut pas encore mettre à jour les dernières versions automatiquement, cela reste une opération manuelle.
+
+Vous allez mettre à jour les dépendances suivantes, 
+
+* `org.mybatis.spring.boot:mybatis-spring-boot-starter` à la version `3.0.3`
+* `org.mybatis.spring.boot:mybatis-spring-boot-starter-test` à la version `3.0.3`
+* `io.rest-assured:rest-assured` à la version `5.4.0`
+* `io.rest-assured:json-path` à la version `5.4.0`
+* `io.rest-assured:xml-path` à la version `5.4.0`
+* `io.rest-assured:spring-mock-mvc` à la version `5.4.0`
+
+Ensuite compilez le projet avec la commande suivante:
+
+```
+./gradlew clean build
 ```
 
-Avec ces changements vous devriez pouvoir build le projet sans erreurs.
+Avec tous ces changements vous devriez pouvoir build le projet sans erreurs !
 
+### Analyse Sonar post-migration
 
-### Analyse Sonar post migration
+Lancez une nouvelle analyse Sonar après la migration pour voir la qualité du code:
 
-Pour lancer une nouvelle analyse Sonar après la migration, exécutez la commande suivante:
+```
+./gradlew test dependencyCheckAnalyze sonar
+```
 
-    ./gradlew test dependencyCheckAnalyze sonar
+Une fois faites, vous pouvez retourner sur la page "overview" du serveur sonar, et les données de l'analyse devraient être disponibles.
 
+Vous devriez voir une page qui ressemble à celle-ci:
+
+![Analyse Sonar](analyse-sonar-post-migration.png)
+
+## Félicitation !
+
+Vous voila ainsi prêt pour améliorer les standards de qualité du code en passant à la prochaine étape: [Qualité du code avec GitHub Copilot](docs/BUGS_COPILOT.md)

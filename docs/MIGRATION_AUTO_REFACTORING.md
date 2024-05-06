@@ -54,6 +54,6 @@ Ensuite compilez le projet avec la commande suivante:
 
 À ce stade vous avez des erreurs de compilation car les recettes de migration appliquées modifient le code par rapport aux versions des cadres de travail utilisés mais OpenRewrite ne peut pas migrer le code spécifique à l'application.
 
-## Félicication !
+## Félicitation !
 
 Vous voila ainsi prêt pour finaliser la migration du projet en passant à la prochaine étape: [Fixer la migration avec GitHub Copilot](MIGRATION_COPILOT.md)

@@ -50,6 +50,6 @@ Par la suite, vous devez exécuter la commande:
 ./gradlew clean build
 ```
 
-## Félicication !
+## Félicitation !
 
 Vous voila ainsi prêt pour le workshop en passant à la prochaine étape: [Analyse SonarQube initiale](INITAL_SAST.md)

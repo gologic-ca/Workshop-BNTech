@@ -61,8 +61,8 @@ L'analyse devrait prendre quelques minutes tout au plus à s'exécuter.
 Une fois faites, vous pouvez retourner sur la page "overview" de notre serveur sonar, et les données de l'analyse devraient être disponibles.
 Vous devriez voir une page qui ressemble à celle-ci:
 
-![Analyse Sonar](analyse-sonar.png)
+![Analyse Sonar](analyse-sonar-initial.png)
 
-## Félicication !
+## Félicitation !
 
 Vous voila ainsi prêt pour migrer le projet en passant à la prochaine étape: [Migration automatisé avec OpenRewrite](MIGRATION_AUTO_REFACTORING.md)

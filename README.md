@@ -11,4 +11,3 @@ Nous allons découvrir comment ces outils peuvent aider à maintenir un code pro
 * [Fixer la migration avec GitHub Copilot](docs/MIGRATION_COPILOT.md)
 * [Qualité du code avec GitHub Copilot](docs/BUGS_COPILOT.md)
 * ["Clean as you code" avec GitHub Copilot](docs/CAYC_COPILOT.md)
-* [Analyse SonarQube finale](docs/FINAL_SAST.md)
