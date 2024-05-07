@@ -171,14 +171,28 @@ Vous pouvez suivre sa proposition ou directement remplacez la méthode par ce co
 
 Malheureusement, GitHub Copilot ne peut pas encore mettre à jour les dernières versions automatiquement, cela reste une opération manuelle.
 
-Vous allez mettre à jour les dépendances suivantes, 
+[!TIP]
+GitHub Copilot à l'heure actuelle est entrainé sur des données jusqu'en 2021. Il est limité pour les mise à jour de versions récentes.
 
-* `org.mybatis.spring.boot:mybatis-spring-boot-starter` à la version `3.0.3`
-* `org.mybatis.spring.boot:mybatis-spring-boot-starter-test` à la version `3.0.3`
-* `io.rest-assured:rest-assured` à la version `5.4.0`
-* `io.rest-assured:json-path` à la version `5.4.0`
-* `io.rest-assured:xml-path` à la version `5.4.0`
-* `io.rest-assured:spring-mock-mvc` à la version `5.4.0`
+À la ligne 56 remplacer la version de MyBatis par: 
+
+```groovy
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+```
+vous pouvez remplaçer le bloc de code 69 à 76 avec la version de rest assured 5.4.0:
+
+```groovy
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
+    testImplementation 'io.rest-assured:json-path:5.4.0'
+    testImplementation 'io.rest-assured:xml-path:5.4.0'
+    testImplementation 'io.rest-assured:spring-mock-mvc:5.4.0'
+```
+
+Finalement à la ligne 76 remplacer la version de MyBatis Test par: 
+
+```groovy
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+```
 
 Ensuite compilez le projet avec la commande suivante:
 
