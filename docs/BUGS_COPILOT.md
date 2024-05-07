@@ -6,6 +6,18 @@ Dans cet atelier, nous allons voir comment utiliser Github Copilot pour amélior
 
 Le résultat de la nouvelle analyse affiche un niveau de qualité pouvant être améliorer au niveau de la sécurité, de la fiabilité et de la maintenabilité.
 
+### Lier le plugin SonarLint à son instance SonarQube
+
+Nous allons commencer par lier le plugin SonarLint à l'instance SonarQube pour synchroniser les règles de qualité de code ainsi que les problèmes détectés.\
+Avant de commencer, copiez quelque part en dehors d'IntelliJ votre token d'authentification SonarQube, que vous avez déjà copié dans le fichier build.gradle.\
+Pour cela, allez dans Settings → Tools → SonarLint et cliquez sur le bouton "+". Dans la fenêtre qui s'ouvre, entrez un nom pour la connexion (par exemple local), sélectionnez "SonarQube" et ajoutez l'URL de votre instance SonarQube (http://localhost:9000).\
+Entrez enfin votre token d'authentification et cliquez sur "Next", encore "Next" et enfin "Create".
+
+Ensuite, allez dans Settings → Tools → SonarLint → Project Settings et sélectionnez la connexion que vous venez de créer.\
+Ensuite, cliquez sur "Search in the list" et sélectionnez le projet "workshop-dette-technique". Cliquer sur "OK".
+
+La configuration est maintenant terminée, si jamais vous ne voyez pas des problèmes que SonarQube devrait relever dans l'IDE, redémarrez IntelliJ. 
+
 ### Score au niveau de la sécurité
 
 #### Retirer OpenRewrite
@@ -14,13 +26,13 @@ Pour les problèmes de sécurité dans les dépendances, toutes les failles prov
 
 Maintenant que nous avons fait la migration, nous pouvons retirer ce plugin du projet en utilisant l'assistant GitHub Copilot pour lui demander de supprimer toute référence à ce projet.
 
-Pour cela, ouvrez le chat de Github Copilot et demandez lui par exemple:
+Pour cela, ouvrez le chat de Github Copilot et demandez-lui par exemple:
 
 ```
 Dans le fichier build.gradle supprime toute référence à rewrite
 ```
 
-La réponse retournée devrait vous avoir retirer toute référence à `openrewrite` soit les lignes suivantes ne devraient plus être là: 
+La réponse retournée devrait vous avoir retiré toute référence à `openrewrite` soit les lignes suivantes ne devraient plus être là: 
 
 - `id "org.openrewrite.rewrite" ...`
 - `rewrite { activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2") }`
@@ -78,4 +90,4 @@ Sur le projet, sélectionnez `Analyze->Inspect Code`, dans le résultat naviguez
 
 ## Félicitation !
 
-La dette technique et la qualité est améliorée, vous voila ainsi prêt pour passer à la dernière étape: [Mise en place de la méthode "Clean as you code"](CAYC.md)
+La dette technique et la qualité sont améliorées, vous voila ainsi prêt pour passer à la dernière étape: [Mise en place de la méthode "Clean as you code"](COMPLEXITY.md)
