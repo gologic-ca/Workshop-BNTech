@@ -8,13 +8,15 @@ Le résultat de la nouvelle analyse affiche un niveau de qualité pouvant être 
 
 ### Lier le plugin SonarLint à son instance SonarQube
 
-Nous allons commencer par lier le plugin SonarLint à l'instance SonarQube pour synchroniser les règles de qualité de code ainsi que les problèmes détectés.\
-Avant de commencer, copiez quelque part en dehors d'IntelliJ votre token d'authentification SonarQube, que vous avez déjà copié dans le fichier build.gradle.\
-Pour cela, allez dans Settings → Tools → SonarLint et cliquez sur le bouton "+". Dans la fenêtre qui s'ouvre, entrez un nom pour la connexion (par exemple local), sélectionnez "SonarQube" et ajoutez l'URL de votre instance SonarQube (http://localhost:9000).\
-Entrez enfin votre token d'authentification et cliquez sur "Next", encore "Next" et enfin "Create".
+Nous allons commencer par lier le plugin SonarLint à l'instance SonarQube pour synchroniser les règles de qualité de code ainsi que les problèmes détectés.
 
-Ensuite, allez dans Settings → Tools → SonarLint → Project Settings et sélectionnez la connexion que vous venez de créer.\
-Ensuite, cliquez sur "Search in the list" et sélectionnez le projet "workshop-dette-technique". Cliquer sur "OK".
+1. Avant de commencer, copiez quelque part en dehors d'IntelliJ votre token d'authentification SonarQube, que vous avez déjà copié dans le fichier build.gradle
+
+2. Allez dans Settings → Tools → SonarLint et cliquez sur le bouton "+". Dans la fenêtre qui s'ouvre, entrez un nom pour la connexion (par exemple local), sélectionnez "SonarQube" et ajoutez l'URL de votre instance SonarQube (http://localhost:9000)
+3. Entrez enfin votre token d'authentification et cliquez sur "Next", encore "Next" et enfin "Create"
+4. Retourner dans Settings → Tools → SonarLint → Project Settings et sélectionnez la connexion que vous venez de créer
+5. Cliquez sur "Search in the list" et sélectionnez le projet "workshop-dette-technique". 
+6. Cliquer sur "OK".
 
 La configuration est maintenant terminée, si jamais vous ne voyez pas des problèmes que SonarQube devrait relever dans l'IDE, redémarrez IntelliJ. 
 
