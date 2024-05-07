@@ -23,7 +23,7 @@ Prenez le temps de lire la documentation générée et de la comparer avec ce qu
 
 Si vous allez dans la classe `ArticleFavoriteApi.java`, plusieurs enjeux de maintenabilité sont présent. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
 
-![ArticleFavoriteApi](ArticleFavoriteApi.png)
+![ArticleFavoriteApi](articleFavoriteApi.png)
 
 Dans le chat de GitHub Copilot, demandez-lui par exemple :
 
