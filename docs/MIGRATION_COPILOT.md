@@ -116,6 +116,9 @@ Remplacez le contenu de l'ancienne méthode dans la nouvelle version, vous devri
 
 Le code ne compile toujours pas car la signature de la méthode a changé, utilisez l'assistant GitHub Copilot pour vous proposer une solution en sélectionnant la méthode et en choisissant dans le menu contextuel `GitHub Copilot->Fix this`. 
 
+[!TIP]
+Le bloc de code sélectionné dans l'éditeur va influencer la proposition de GitHub Copilot. Si vous voulez obtenir la méthode complète, sélectionnez la méthode complète avant de demander une correction.
+
 L'assistant devrait vous proposer une solution pour ajuster les retours de fonction soit la réponse ci-dessous: 
 
 > Problem 1: Incorrect return type in handleException method. The handleException method in the GraphQLCustomizeExceptionHandler class is expected to return a CompletableFuture<DataFetcherExceptionHandlerResult>, but currently it's returning DataFetcherExceptionHandlerResult.
@@ -171,14 +174,28 @@ Vous pouvez suivre sa proposition ou directement remplacez la méthode par ce co
 
 Malheureusement, GitHub Copilot ne peut pas encore mettre à jour les dernières versions automatiquement, cela reste une opération manuelle.
 
-Vous allez mettre à jour les dépendances suivantes, 
+[!TIP]
+GitHub Copilot à l'heure actuelle est entrainé sur des données jusqu'en 2021. Il est limité pour les mise à jour de versions récentes.
 
-* `org.mybatis.spring.boot:mybatis-spring-boot-starter` à la version `3.0.3`
-* `org.mybatis.spring.boot:mybatis-spring-boot-starter-test` à la version `3.0.3`
-* `io.rest-assured:rest-assured` à la version `5.4.0`
-* `io.rest-assured:json-path` à la version `5.4.0`
-* `io.rest-assured:xml-path` à la version `5.4.0`
-* `io.rest-assured:spring-mock-mvc` à la version `5.4.0`
+À la ligne 56 remplacer la version de MyBatis par: 
+
+```groovy
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+```
+vous pouvez remplaçer le bloc de code 69 à 76 avec la version de rest assured 5.4.0:
+
+```groovy
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
+    testImplementation 'io.rest-assured:json-path:5.4.0'
+    testImplementation 'io.rest-assured:xml-path:5.4.0'
+    testImplementation 'io.rest-assured:spring-mock-mvc:5.4.0'
+```
+
+Finalement à la ligne 76 remplacer la version de MyBatis Test par: 
+
+```groovy
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+```
 
 Ensuite compilez le projet avec la commande suivante:
 
