@@ -6,6 +6,8 @@ Dans cet atelier, nous allons voir comment utiliser Github Copilot pour amélior
 
 Le résultat de la nouvelle analyse affiche un niveau de qualité pouvant être améliorer au niveau de la sécurité, de la fiabilité et de la maintenabilité.
 
+Nous allons corriger les éléments majeurs relevés par le gating et allons et résoudre d'autres enjeux intéressants présent dans le code
+
 ### Lier le plugin SonarLint à son instance SonarQube
 
 Nous allons commencer par lier le plugin SonarLint à l'instance SonarQube pour synchroniser les règles de qualité de code ainsi que les problèmes détectés.
@@ -21,7 +23,6 @@ Nous allons commencer par lier le plugin SonarLint à l'instance SonarQube pour 
 La configuration est maintenant terminée, si jamais vous ne voyez pas des problèmes que SonarQube devrait relever dans l'IDE, redémarrez IntelliJ. 
 
 ### Score au niveau de la sécurité
-
 #### Retirer OpenRewrite
 
 Pour les problèmes de sécurité dans les dépendances, toutes les failles proviennent du plugin `openrewrite-gradle-plugin` qui est utilisé pour la migration.
@@ -47,15 +48,18 @@ Pour l'ensemble des dépendances à mettre à jour, utilisez IntelliJ pour vous 
 Exemple: 
 - `org.xerial:sqlite-jdbc`, mettre à jour en cliquant sur la CVE et sélectionnant la version `3.41.2.2`
 
-Il restera encore des vulnérabilités non-déclarées dans le `build.gradle`: 
-- `jackson-databind`, ajoutez la dépendance dans la section dependencies: `implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'`
-- `protobuf-java`, ajoutez la dépendance dans la section dependencies: `implementation 'com.google.protobuf:protobuf-java:3.21.7'`
+Il restera encore des vulnérabilités non-déclarées dans le `build.gradle` à ajouter: 
+
+```groovy
+implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
+implementation 'com.google.protobuf:protobuf-java:3.21.7'
+```
 
 À ce stade le niveau de sécurité est maintenant à `A` !
 
 ### Maintenabilité et fiabilité
 
-Nous allons cibler maintenant un élément que copilot peut nous aider à améliorer.
+Nous allons cibler maintenant des éléments que copilot peut nous aider à améliorer.
 
 #### Utilisation de 'instanceof'
 
@@ -72,12 +76,86 @@ Pour cela, ouvrez le chat de Github Copilot et demandez lui un fix pour la descr
 Il vous proposera alors un code de correction que vous pourrez copier coller dans votre IDE, en validant que la solution proposée est correcte.
 
 
-#### Fixer les problèmes de toList 
-Nous allons remplacer l'utilisation de `Stream.collect(Collectors.toList())` par `Stream.toList()` dans l'ensemble du projet.
+#### Maintenabilité dans le fichier profileApi 
 
-Pour cela, recherchez et remplacez dans l'ensemble du projet (Ctrl+Shift+R):
-1. `collect(Collectors.toList())` et remplacez les par `toList()`.
-2. `collect(toList())` et remplacez les par `toList()`.
+Nous allons régler plusieurs problèmes de maintenabilité dans le fichier `ProfileApi.java`. 
+
+Nous allons tout d'abord régler le problème de la méthode profileResponse à la ligne 70. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
+
+![Alt text](profileApi.png)
+
+Dans le chat de Github Copilot copier le message de cette façon: 
+
+```
+/fix Use another way to initialize this instance.
+```
+
+Nous allons faire la même chose pour le problème sur Response Entity. Parcontre, cette erreur se retrouve à plusieurs endroits dans le fichier, nous allons donc sélectionner de la ligne 28 jusqu'à la ligne 74, puis dans le chat de Github Copilot demandez lui par exemple:
+
+```
+/fix Raw use of parameterized class 'ResponseEntity' 
+Provide the parametrized type for this generic.
+```
+
+De cette façon, le problème sera résolu pour toutes les occurrences de l'erreur!
+
+<details>
+    <summary>Solution du fichier profileApi.java</summary>
+    
+```java
+    @GetMapping
+    public ResponseEntity<HashMap<String, ProfileData>> getProfile(
+        @PathVariable String username, @AuthenticationPrincipal User user) {
+      return profileQueryService
+          .findByUsername(username, user)
+          .map(this::profileResponse)
+          .orElseThrow(ResourceNotFoundException::new);
+    }
+    
+    @PostMapping(path = "follow")
+    public ResponseEntity<HashMap<String, ProfileData>> follow(
+        @PathVariable String username, @AuthenticationPrincipal User user) {
+      return userRepository
+          .findByUsername(username)
+          .map(
+              target -> {
+                FollowRelation followRelation = new FollowRelation(user.getId(), target.getId());
+                userRepository.saveRelation(followRelation);
+                return profileResponse(profileQueryService.findByUsername(username, user).get());
+              })
+          .orElseThrow(ResourceNotFoundException::new);
+    }
+    
+    @DeleteMapping(path = "follow")
+    public ResponseEntity<HashMap<String, ProfileData>> unfollow(
+        @PathVariable String username, @AuthenticationPrincipal User user) {
+      Optional<User> userOptional = userRepository.findByUsername(username);
+      if (userOptional.isPresent()) {
+        User target = userOptional.get();
+        return userRepository
+            .findRelation(user.getId(), target.getId())
+            .map(
+                relation -> {
+                  userRepository.removeRelation(relation);
+                  return profileResponse(profileQueryService.findByUsername(username, user).get());
+                })
+            .orElseThrow(ResourceNotFoundException::new);
+      } else {
+        throw new ResourceNotFoundException();
+      }
+    }
+    
+    private ResponseEntity<HashMap<String, ProfileData>> profileResponse(ProfileData profile) {
+      HashMap<String, ProfileData> map = new HashMap<>();
+      map.put("profile", profile);
+    
+      return ResponseEntity.ok(map);
+    }
+```
+</details>
+
+> [!WARNING]
+Il est important de toujours contre-vérifier les modifications proposées par Github Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
 
 ## Félicitation !
 
