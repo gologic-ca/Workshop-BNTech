@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 @Import({
   ArticleQueryService.class,
   MyBatisUserRepository.class,
@@ -178,6 +180,15 @@ public class ArticleQueryServiceTest extends DbTestBase {
     Assertions.assertEquals(articleData.getId(), article.getId());
     Assertions.assertEquals(articleData.getFavoritesCount(), 1);
     Assertions.assertTrue(articleData.isFavorited());
+  }
+
+  @Test
+  public void shouldReturnEmpstyOptionalWhenFindBySlugIsCalledWithNonExistingSlug() {
+    User user = new User("test@test.com", "test", "123", "", "");
+
+    Optional<ArticleData> result = queryService.findBySlug("non-existing-slug", user);
+
+    assertFalse(result.isPresent());
   }
 
   @Test
