@@ -10,8 +10,8 @@ L'outil transforme le code source dans un arbre de syntaxe abstraite ce qui lui 
 L'outil utilise un concept de recette à appliquer sur le code source. La communauté de développeur contribue énormément à l'amélioration des recettes ce qui rend les transformations extrêmement robustes et fiables. 
 
 > [!NOTE]
-­> Il existe actuellement plus de 1000 recettes disponibles 
-  pour une multitude de frameworks et de langages de  programmation( Java, Terraform, Python, etc).
+­Il existe actuellement plus de 1000 recettes disponibles 
+pour une multitude de frameworks et de langages de  programmation( Java, Terraform, Python, etc).
 
 
 ## Migration automatisé avec OpenRewrite vers Springboot 3.x
