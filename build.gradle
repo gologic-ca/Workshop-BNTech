@@ -43,10 +43,6 @@ cyclonedxBom {
     destination = file("build/reports/sbom")
 }
 
-rewrite {
-    activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2")
-}
-
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
