@@ -1,5 +1,19 @@
 # Workshop: Libérez-vous de la dette technique grâce à l'IA et au refactoring automatisé
 
+## Mise en contexte
+[OpenRewrite](https://github.com/openrewrite) est un outil maintenu par l'entreprise [Moderne](https://www.moderne.io/) et permet d'opérer des transformations sur votre code source. 
+
+L'outil transforme le code source dans un arbre de syntaxe abstraite ce qui lui permet de se déplacer dans les différentes parties du code et d'appliquer des transformations.
+
+![lst](image.png)
+
+L'outil utilise un concept de recette à appliquer sur le code source. La communauté de développeur contribue énormément à l'amélioration des recettes ce qui rend les transformations extrêmement robustes et fiables. 
+
+> [!NOTE]
+­> Il existe actuellement plus de 1000 recettes disponibles 
+  pour une multitude de frameworks et de langages de  programmation( Java, Terraform, Python, etc).
+
+
 ## Migration automatisé avec OpenRewrite vers Springboot 3.x
 
 Notre environnement est enfin prêt pour lancer la migration de notre application vers Springboot 3. Pour cela, nous allons utiliser OpenRewrite, un outil de refactoring automatisé qui nous permettra de migrer notre application en quelques étapes simples.
