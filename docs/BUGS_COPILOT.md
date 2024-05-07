@@ -53,20 +53,88 @@ Il restera encore des vulnérabilités non-déclarées dans le `build.gradle`:
 
 ### Maintenabilité et fiabilité
 
-Pour ce qui est des code smells, nous allons les corriger manuellement, ainsi qu'avec l'aide de Github Copilot.
+Nous allons cibler certains éléments de maintenabilité et utiliser github Copilot afin de les corriger
 
-#### Utilisation des collectors
+### Maintenabilité dans le fichier profileApi 
 
-Nous allons remplacer l'utilisation de `Stream.collect(Collectors.toList())` par `Stream.toList()` dans l'ensemble du projet.
+Nous allons régler plusieurs problèmes de maintenabilité dans le fichier `ProfileApi.java`. 
 
-Pour cela, recherchez et remplacez dans l'ensemble du projet (Ctrl+Shift+R):
-1. `collect(Collectors.toList())` et remplacez les par `toList()`.
-2. `collect(toList())` et remplacez les par `toList()`.
+Nous allons tout d'abord régler le problème de la méthode profileResponse à la ligne 70. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
 
-#### Utilisation des références de méthode dans les lambdas
+![Alt text](profileApi.png)
 
-Si vous allez dans la classe `ArticleQueryService.java` vous devriez voir un code smell sur la ligne 160.
-IntelliJ nous propose une correction rapide, vous pour l'appliquer en appuyant sur `Ctrl+Alt+Enter` ou en maintenant votre souris sur le code souligné et en choisissant la première option.
+Dans le chat de Github Copilot demandez lui par exemple:
+
+```
+/fix Use another way to initialize this instance.
+```
+
+Nous allons faire la même chose pour le problème sur Response Entity. Parcontre, cette erreur se retrouve à plusieurs endroits dans le fichier, nous allons donc sélectionner de la ligne 28 jusqu'à la ligne 74, puis dans le chat de Github Copilot demandez lui par exemple:
+
+```
+/fix Raw use of parameterized class 'ResponseEntity' 
+Provide the parametrized type for this generic.
+```
+
+<details>
+    <summary>Solution</summary>
+    
+```java
+    @GetMapping
+    public ResponseEntity<HashMap<String, ProfileData>> getProfile(
+        @PathVariable String username, @AuthenticationPrincipal User user) {
+      return profileQueryService
+          .findByUsername(username, user)
+          .map(this::profileResponse)
+          .orElseThrow(ResourceNotFoundException::new);
+    }
+    
+    @PostMapping(path = "follow")
+    public ResponseEntity<HashMap<String, ProfileData>> follow(
+        @PathVariable String username, @AuthenticationPrincipal User user) {
+      return userRepository
+          .findByUsername(username)
+          .map(
+              target -> {
+                FollowRelation followRelation = new FollowRelation(user.getId(), target.getId());
+                userRepository.saveRelation(followRelation);
+                return profileResponse(profileQueryService.findByUsername(username, user).get());
+              })
+          .orElseThrow(ResourceNotFoundException::new);
+    }
+    
+    @DeleteMapping(path = "follow")
+    public ResponseEntity<HashMap<String, ProfileData>> unfollow(
+        @PathVariable String username, @AuthenticationPrincipal User user) {
+      Optional<User> userOptional = userRepository.findByUsername(username);
+      if (userOptional.isPresent()) {
+        User target = userOptional.get();
+        return userRepository
+            .findRelation(user.getId(), target.getId())
+            .map(
+                relation -> {
+                  userRepository.removeRelation(relation);
+                  return profileResponse(profileQueryService.findByUsername(username, user).get());
+                })
+            .orElseThrow(ResourceNotFoundException::new);
+      } else {
+        throw new ResourceNotFoundException();
+      }
+    }
+    
+    private ResponseEntity<HashMap<String, ProfileData>> profileResponse(ProfileData profile) {
+      HashMap<String, ProfileData> map = new HashMap<>();
+      map.put("profile", profile);
+    
+      return ResponseEntity.ok(map);
+    }
+```
+</details>
+
+[!WARNING]
+Il est important de toujours contre-vérifier les modifications proposées par Github Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
+
+
 
 #### Utilisation de 'instanceof'
 
@@ -81,6 +149,76 @@ Pour cela, ouvrez le chat de Github Copilot et demandez lui un fix pour la descr
 ```
 
 Il vous proposera alors un code de correction que vous pourrez copier coller dans votre IDE, en validant que la solution proposée est correcte.
+
+
+#### Utilisation des références de méthode dans les lambdas
+
+Si vous allez dans la classe `ArticleFavoriteApi.java`, plusieurs enjeux de maintenabilité sont présent. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
+
+![Alt text](ArticleFavoriteApi.png)
+
+Dans le chat de Github Copilot demandez lui par exemple:
+
+```
+/fix Call "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.
+```
+
+Vous devriez avoir un résultat qui ressemble à ceci:
+
+```java
+  @PostMapping
+  public ResponseEntity favoriteArticle(
+      @PathVariable String slug, @AuthenticationPrincipal User user) {
+    Article article =
+        articleRepository.findBySlug(slug).orElseThrow(ResourceNotFoundException::new);
+    ArticleFavorite articleFavorite = new ArticleFavorite(article.getId(), user.getId());
+    articleFavoriteRepository.save(articleFavorite);
+      Optional<ArticleData> optionalArticleData = articleQueryService.findBySlug(slug, user);
+      if (optionalArticleData.isEmpty()) {
+          throw new ResourceNotFoundException();
+      }
+      return responseArticleData(optionalArticleData.get());
+  }
+```
+
+Vous pouvez par la suite sélectionner la méthode unfavoriteArticle, puis dans le chat peser sur la flèche du haut pour réutiliser le dernier message
+
+le résultat devrait ressembler à ceci:
+
+```java
+    @DeleteMapping
+    public ResponseEntity unfavoriteArticle(
+        @PathVariable String slug, @AuthenticationPrincipal User user) {
+      Article article =
+          articleRepository.findBySlug(slug).orElseThrow(ResourceNotFoundException::new);
+      articleFavoriteRepository
+          .find(article.getId(), user.getId())
+          .ifPresent(
+              favorite -> {
+                articleFavoriteRepository.remove(favorite);
+              });
+      Optional<ArticleData> optionalArticleData = articleQueryService.findBySlug(slug, user);
+      if (optionalArticleData.isEmpty()) {
+          throw new ResourceNotFoundException();
+      }
+      return responseArticleData(optionalArticleData.get());
+    }
+```
+
+#### Mauvais initialisation de HashMap avec duplication
+
+Dans le fichier ArticleDataFetcher.java, nous allons corriger les trois mauvaises initialisations de HashMap qui sont dupliquées.
+Pour ce faire sélectionner la ligne 300 à 357, puis dans le chat de Github Copilot demandez lui par exemple:
+
+```
+move initialization of hashmap in method
+```
+
+Il devrait vous proposer une nouvelle méthode ainsi que les modifications aux trois méthodes existantes.
+
+[!TIP]
+Lorsque Copilot vous propose des changements, mais qu'il n'inclut pas complètement le code( Il met un commentaire `//...` par exemple), vous pouvez peser sur la flèche du haut dans le chat pour que votre dernier message soit réutilisé, puis ajouter dans votre message generate all the code
+
 
 #### Nettoyage des imports non-utilisés
 

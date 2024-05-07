@@ -116,6 +116,9 @@ Remplacez le contenu de l'ancienne méthode dans la nouvelle version, vous devri
 
 Le code ne compile toujours pas car la signature de la méthode a changé, utilisez l'assistant GitHub Copilot pour vous proposer une solution en sélectionnant la méthode et en choisissant dans le menu contextuel `GitHub Copilot->Fix this`. 
 
+[!TIP]
+Le bloc de code sélectionné dans l'éditeur va influencer la proposition de GitHub Copilot. Si vous voulez obtenir la méthode complète, sélectionnez la méthode complète avant de demander une correction.
+
 L'assistant devrait vous proposer une solution pour ajuster les retours de fonction soit la réponse ci-dessous: 
 
 > Problem 1: Incorrect return type in handleException method. The handleException method in the GraphQLCustomizeExceptionHandler class is expected to return a CompletableFuture<DataFetcherExceptionHandlerResult>, but currently it's returning DataFetcherExceptionHandlerResult.
