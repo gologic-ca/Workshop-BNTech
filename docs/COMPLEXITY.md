@@ -23,15 +23,15 @@ Prenez le temps de lire la documentation générée et de la comparer avec ce qu
 
 Si vous allez dans la classe `ArticleFavoriteApi.java`, plusieurs enjeux de maintenabilité sont présent. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
 
-![Alt text](ArticleFavoriteApi.png)
+![ArticleFavoriteApi](ArticleFavoriteApi.png)
 
-Dans le chat de Github Copilot demandez lui par exemple:
+Dans le chat de GitHub Copilot, demandez-lui par exemple :
 
 ```
 /fix Call "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.
 ```
 
-Vous devriez avoir un résultat qui ressemble à ceci:
+Vous devriez avoir un résultat qui ressemble à ceci :
 
 ```java
   @PostMapping
@@ -51,7 +51,7 @@ Vous devriez avoir un résultat qui ressemble à ceci:
 
 Vous pouvez par la suite sélectionner la méthode unfavoriteArticle, puis dans le chat peser sur la flèche du haut pour réutiliser le dernier message
 
-le résultat devrait ressembler à ceci:
+Le résultat devrait ressembler à ceci :
 
 ```java
     @DeleteMapping
@@ -73,10 +73,10 @@ le résultat devrait ressembler à ceci:
     }
 ```
 
-## Mauvais initiaelisation de HashMap avec duplication
+## Mauvaise initialisation de HashMap avec duplication
 
 Dans le fichier ArticleDataFetcher.java, nous allons corriger les trois mauvaises initialisations de HashMap qui sont dupliquées.
-Pour ce faire sélectionner la ligne 300 à 357, puis dans le chat de Github Copilot demandez lui par exemple:
+Pour se faire sélectionner la ligne 300 à 357, puis dans le chat de Github Copilot demandez lui par exemple:
 
 ```
 move initialization of hashmap in method
@@ -85,30 +85,30 @@ move initialization of hashmap in method
 Il devrait vous proposer une nouvelle méthode ainsi que les modifications aux trois méthodes existantes.
 
 [!TIP]
-Lorsque Copilot vous propose des changements, mais qu'il n'inclut pas complètement le code( Il met un commentaire `//...` par exemple), vous pouvez peser sur la flèche du haut dans le chat pour que votre dernier message soit réutilisé, puis ajouter dans votre message generate all the code
+Lorsque Copilot vous propose des changements, mais qu'il n'inclut pas complètement le code( Il met un commentaire `//...` par exemple), vous pouvez peser sur la flèche du haut dans le chat pour que votre dernier message soit réutilisé, puis ajouter dans votre message `generate all the code`
 
 ## Une erreur de sérialisation un peu ambiguë
-Nous allons explorer un erreur de sérialisation dans le fichier `InvalidRequestException.java`. Copier le message de SonarLint sur le champ `errors` et demandez à Copilot de le corriger. Vous devriez avoir quelque chose comme ceci:
+Nous allons explorer une erreur de sérialisation dans le fichier `InvalidRequestException.java`. Copier le message de SonarLint sur le champ `errors` et demandez à Copilot de le corriger. Vous devriez avoir quelque chose comme ceci:
 
 ```
 /fix Make 'errors' transient or serializable.
 ```
 
-Le résultat devrait ressembler à ceci:
+Le résultat devrait ressembler à ceci :
 
 ```java
   private final transient Errors errors;
 ```
 
-Afin de s'assurer que la solution fournis convient à notre problème, il est recommandé ici de se rendre dans sonarqube afin de trouver le problème. SonarQube fournit des informations importantes afin de bien diagnostiquer si la solution correspond au besoin
+Afin de s'assurer que la solution fournie convient à notre problème, il est recommandé ici de se rendre dans sonarqube afin de trouver le problème. SonarQube fournit des informations importantes afin de bien diagnostiquer si la solution correspond au besoin
 
-![un problème ambigue](ambigue.png)
+![Un problème ambigu](ambigue.png)
 
-Ici nous avons un exemple ou les deux outils peuvent travailler ensemble afin de résoudre un problème qui n'a pas une solution directe.
+Ici, nous avons un exemple où les deux outils peuvent travailler ensemble pour résoudre un problème qui n'a pas une solution directe.
 
 ## Félicitation !
 
-Vous avez maintenant un application beaucoup plus robuste et votre équipe à compris comment utiliser adéquatement Github Copilot pour améliorer la qualité du code. Si vous avez du temps, vous pouvez exécuter pour admirer votre travail:
+Vous avez maintenant une application beaucoup plus robuste et votre équipe a compris comment utiliser adéquatement Github Copilot pour améliorer la qualité du code. Si vous avez du temps, vous pouvez exécuter pour admirer votre travail:
 
 ```bash
 ./gradlew test dependencyCheckAnalyze sonar 
