@@ -133,9 +133,6 @@ Provide the parametrized type for this generic.
 
 > [!WARNING]
 Il est important de toujours contre-vérifier les modifications proposées par Github Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
-
-
-
 #### Utilisation de 'instanceof'
 
 Dans la classe `GraphQLCustomizeExceptionHandler.java`, vous devriez voir un code smell sur la ligne 42.
