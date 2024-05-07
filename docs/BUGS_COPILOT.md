@@ -167,6 +167,3 @@ Les problèmes qui empêchait le gating de passer sont maintenant corrigé. Si v
 
 sinon on peut passer à l'étape suivante, ou nous allons faire des excercices pour améliorer encore plus la qualité du code: [Mise en place de la méthode "Clean as you code"](COMPLEXITY.md)
 
-## Félicitation !
-
-La dette technique et la qualité sont améliorées, vous voila ainsi prêt pour passer à la dernière étape: [Mise en place de la méthode "Clean as you code"](COMPLEXITY.md)

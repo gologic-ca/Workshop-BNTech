@@ -19,7 +19,7 @@ Pour cela, sélectionnez l'ensemble de la méthode `findUserFeed`, faites un cli
 Le chat devrait vous répondre le bloc de code que vous avez sélectionné, précédé d'un bloc de documentation au format Javadoc.
 Prenez le temps de lire la documentation générée et de la comparer avec ce que fait réellement la méthode.
 
-## Utilisation des références de méthode dans les lambdas
+## Résoudre les problèmes dans ArticleFavoriteApi
 
 Si vous allez dans la classe `ArticleFavoriteApi.java`, plusieurs enjeux de maintenabilité sont présent. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
 
@@ -73,7 +73,7 @@ le résultat devrait ressembler à ceci:
     }
 ```
 
-## Mauvais initialisation de HashMap avec duplication
+## Mauvais initiaelisation de HashMap avec duplication
 
 Dans le fichier ArticleDataFetcher.java, nous allons corriger les trois mauvaises initialisations de HashMap qui sont dupliquées.
 Pour ce faire sélectionner la ligne 300 à 357, puis dans le chat de Github Copilot demandez lui par exemple:
@@ -86,6 +86,25 @@ Il devrait vous proposer une nouvelle méthode ainsi que les modifications aux t
 
 [!TIP]
 Lorsque Copilot vous propose des changements, mais qu'il n'inclut pas complètement le code( Il met un commentaire `//...` par exemple), vous pouvez peser sur la flèche du haut dans le chat pour que votre dernier message soit réutilisé, puis ajouter dans votre message generate all the code
+
+## Une erreur de sérialisation un peu ambiguë
+Nous allons explorer un erreur de sérialisation dans le fichier `InvalidRequestException.java`. Copier le message de SonarLint sur le champ `errors` et demandez à Copilot de le corriger. Vous devriez avoir quelque chose comme ceci:
+
+```
+/fix Make 'errors' transient or serializable.
+```
+
+Le résultat devrait ressembler à ceci:
+
+```java
+  private final transient Errors errors;
+```
+
+Afin de s'assurer que la solution fournis convient à notre problème, il est recommandé ici de se rendre dans sonarqube afin de trouver le problème. SonarQube fournit des informations importantes afin de bien diagnostiquer si la solution correspond au besoin
+
+![un problème ambigue](ambigue.png)
+
+Ici nous avons un exemple ou les deux outils peuvent travailler ensemble afin de résoudre un problème qui n'a pas une solution directe.
 
 ## Félicitation !
 
