@@ -84,7 +84,7 @@ move initialization of hashmap in method
 
 Il devrait vous proposer une nouvelle méthode ainsi que les modifications aux trois méthodes existantes.
 
-­­> [!TIP]
+> [!TIP]
 Lorsque Copilot vous propose des changements, mais qu'il n'inclut pas complètement le code( Il met un commentaire `//...` par exemple), vous pouvez peser sur la flèche du haut dans le chat pour que votre dernier message soit réutilisé, puis ajouter dans votre message `generate all the code`
 
 ## Une erreur de sérialisation un peu ambiguë
