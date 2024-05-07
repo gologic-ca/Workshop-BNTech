@@ -2,11 +2,11 @@
 
 ## Qualité du code avec GitHub Copilot
 
-Dans cet atelier, nous allons voir comment utiliser Github Copilot pour améliorer la qualité du code de notre application.
+Dans cet atelier, nous allons voir comment utiliser GitHub Copilot pour améliorer la qualité du code de notre application.
 
-Le résultat de la nouvelle analyse affiche un niveau de qualité pouvant être améliorer au niveau de la sécurité, de la fiabilité et de la maintenabilité.
+Le résultat de la nouvelle analyse affiche un niveau de qualité pouvant être amélioré au niveau de la sécurité, de la fiabilité et de la maintenabilité.
 
-Nous allons corriger les éléments majeurs relevés par le gating et allons et résoudre d'autres enjeux intéressants présent dans le code
+Nous allons corriger les éléments majeurs relevés par le *gating* et allons résoudre d'autres enjeux intéressants présent dans le code
 
 ### Lier le plugin SonarLint à son instance SonarQube
 
@@ -29,7 +29,7 @@ Pour les problèmes de sécurité dans les dépendances, toutes les failles prov
 
 Maintenant que nous avons fait la migration, nous pouvons retirer ce plugin du projet en utilisant l'assistant GitHub Copilot pour lui demander de supprimer toute référence à ce projet.
 
-Pour cela, ouvrez le chat de Github Copilot et demandez-lui par exemple:
+Pour cela, ouvrez le chat de GitHub Copilot et demandez-lui par exemple :
 
 ```
 Dans le fichier build.gradle supprime toute référence à rewrite
@@ -45,21 +45,21 @@ La réponse retournée devrait vous avoir retiré toute référence à `openrewr
 
 Pour l'ensemble des dépendances à mettre à jour, utilisez IntelliJ pour vous aider.
 
-Exemple: 
-- `org.xerial:sqlite-jdbc`, mettre à jour en cliquant sur la CVE et sélectionnant la version `3.41.2.2`
+Exemple : 
+- `org.xerial:sqlite-jdbc`, mettre à jour en cliquant sur la CVE et en sélectionnant la version `3.41.2.2`
 
-Il restera encore des vulnérabilités non-déclarées dans le `build.gradle` à ajouter: 
+Il restera encore des vulnérabilités non déclarées dans le `build.gradle` à ajouter : 
 
 ```groovy
 implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
 implementation 'com.google.protobuf:protobuf-java:3.21.7'
 ```
 
-À ce stade le niveau de sécurité est maintenant à `A` !
+À ce stade, le niveau de sécurité est désormais à `A` !
 
 ### Maintenabilité et fiabilité
 
-Nous allons cibler maintenant des éléments que copilot peut nous aider à améliorer.
+Nous allons cibler maintenant des éléments que GitHub Copilot peut nous aider à améliorer.
 
 #### Utilisation de 'instanceof'
 
@@ -67,13 +67,13 @@ Dans la classe `GraphQLCustomizeExceptionHandler.java`, vous devriez voir un cod
 
 Pour ce code smell, il n'y a pas de correction rapide disponible, pour l'exercice nous allons utiliser Github Copilot.
 
-Pour cela, ouvrez le chat de Github Copilot et demandez lui un fix pour la description du code smell, par exemple:
+Pour cela, ouvrez le chat de GitHub Copilot et demandez-lui un fix pour la description du code smell, par exemple:
 
 ```
 /fix Replace this instanceof check and cast with 'instanceof ConstraintViolationException constraintviolationexception' Only generate the snippet
 ```
 
-Il vous proposera alors un code de correction que vous pourrez copier coller dans votre IDE, en validant que la solution proposée est correcte.
+Il vous proposera alors un code de correction que vous pourrez copier-coller dans votre IDE, en validant que la solution proposée est correcte.
 
 
 #### Maintenabilité dans le fichier profileApi 
@@ -82,22 +82,22 @@ Nous allons régler plusieurs problèmes de maintenabilité dans le fichier `Pro
 
 Nous allons tout d'abord régler le problème de la méthode profileResponse à la ligne 70. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
 
-![Alt text](profileApi.png)
+![profileApi](profileApi.png)
 
-Dans le chat de Github Copilot copier le message de cette façon: 
+Dans le chat de GitHub Copilot, copier le message de cette façon : 
 
 ```
 /fix Use another way to initialize this instance.
 ```
 
-Nous allons faire la même chose pour le problème sur Response Entity. Parcontre, cette erreur se retrouve à plusieurs endroits dans le fichier, nous allons donc sélectionner de la ligne 28 jusqu'à la ligne 74, puis dans le chat de Github Copilot demandez lui par exemple:
+Nous allons faire la même chose pour le problème sur Response Entity. Par contre, cette erreur se retrouve à plusieurs endroits dans le fichier, nous allons donc sélectionner de la ligne 28 jusqu'à la ligne 74, puis dans le chat de Github Copilot demandez lui par exemple:
 
 ```
 /fix Raw use of parameterized class 'ResponseEntity' 
 Provide the parametrized type for this generic.
 ```
 
-De cette façon, le problème sera résolu pour toutes les occurrences de l'erreur!
+De cette façon, le problème sera résolu pour toutes les occurrences de l'erreur !
 
 <details>
     <summary>Solution du fichier profileApi.java</summary>
@@ -155,15 +155,15 @@ De cette façon, le problème sera résolu pour toutes les occurrences de l'erre
 </details>
 
 > [!WARNING]
-Il est important de toujours contre-vérifier les modifications proposées par Github Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
+Il est important de toujours contre-vérifier les modifications proposées par GitHub Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
 
 ## Félicitation !
 
-Les problèmes qui empêchait le gating de passer sont maintenant corrigé. Si vous êtes limités par le temps, exécuter pour admirer votre travail:
+Les problèmes qui empêchaient le *gating* de passer sont maintenant corrigés. Si vous êtes limités par le temps, exécuter pour admirer votre travail:
 
 ```bash
 ./gradlew test dependencyCheckAnalyze sonar 
 ```
 
-sinon on peut passer à l'étape suivante, ou nous allons faire des excercices pour améliorer encore plus la qualité du code: [Mise en place de la méthode "Clean as you code"](COMPLEXITY.md)
+Sinon, on peut passer à l'étape suivante, où nous allons faire des exercices pour améliorer encore plus la qualité du code: [Mise en place de la méthode "Clean as you code"](COMPLEXITY.md)
 
