@@ -131,7 +131,7 @@ Provide the parametrized type for this generic.
 ```
 </details>
 
-[!WARNING]
+> [!WARNING]
 Il est important de toujours contre-vérifier les modifications proposées par Github Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
 
 
