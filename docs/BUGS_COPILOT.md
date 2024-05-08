@@ -61,21 +61,6 @@ implementation 'com.google.protobuf:protobuf-java:3.21.7'
 
 Nous allons cibler maintenant des éléments que GitHub Copilot peut nous aider à améliorer.
 
-#### Utilisation de 'instanceof'
-
-Dans la classe `GraphQLCustomizeExceptionHandler.java`, vous devriez voir un code smell sur la ligne 42.
-
-Pour ce code smell, il n'y a pas de correction rapide disponible, pour l'exercice nous allons utiliser Github Copilot.
-
-Pour cela, ouvrez le chat de GitHub Copilot et demandez-lui un fix pour la description du code smell, par exemple:
-
-```
-/fix Replace this instanceof check and cast with 'instanceof ConstraintViolationException constraintviolationexception' Only generate the snippet
-```
-
-Il vous proposera alors un code de correction que vous pourrez copier-coller dans votre IDE, en validant que la solution proposée est correcte.
-
-
 #### Maintenabilité dans le fichier profileApi 
 
 Nous allons régler plusieurs problèmes de maintenabilité dans le fichier `ProfileApi.java`. 
@@ -156,6 +141,21 @@ De cette façon, le problème sera résolu pour toutes les occurrences de l'erre
 
 > [!WARNING]
 Il est important de toujours contre-vérifier les modifications proposées par GitHub Copilot pour s'assurer qu'elles sont correctes. Particulièrement pour des changements sur plusieurs méthodes.
+
+#### Utilisation de 'instanceof'
+
+Dans la classe `GraphQLCustomizeExceptionHandler.java`, vous devriez voir un code smell sur la ligne 42.
+
+Pour ce code smell, il n'y a pas de correction rapide disponible, pour l'exercice nous allons utiliser Github Copilot.
+
+Pour cela, ouvrez le chat de GitHub Copilot et demandez-lui un fix pour la description du code smell, par exemple:
+
+```
+/fix Replace this instanceof check and cast with 'instanceof ConstraintViolationException constraintviolationexception' Only generate the snippet
+```
+
+Il vous proposera alors un code de correction que vous pourrez copier-coller dans votre IDE, en validant que la solution proposée est correcte.
+
 
 ## Félicitation !
 
