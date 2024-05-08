@@ -9,13 +9,13 @@ Dans cette section, nous allons corriger plusieurs cas relevé par sonarlint qui
 Un cas de complexité cognitive apparaît lorsqu'une méthode ou une classe est trop complexe à comprendre. Cela peut être dû à une longue liste de paramètres, une longue liste d'instructions, des conditions imbriquées, etc.
 À terme cela peut rendre le code difficile à maintenir et à faire évoluer.
 
-Pour les besoins du workshop, nous avons modifier une méthode pour la rendre volontaire trop complexe et faire en sorte que SonarQube le relève.
+Pour les besoins du workshop, nous avons modifié une méthode pour la rendre volontairement trop complexe et faire en sorte que SonarQube relève une amélioration.
 Cette méthode est `findUserFeed` dans la classe `ArticleQueryService`.
 
 ### Générer de la documentation
 
 Une bonne chose à faire pour commencer à résoudre le problème est de comprendre ce que fait la méthode. Si malheureusement il n'y a pas de documentation, nous pouvons utiliser Github Copilot pour nous aider à en générer.
-Pour cela, sélectionnez l'ensemble de la méthode `findUserFeed`, faites un clic droit sur la sélection et choisissez "Generate Docs" dans le menu "GitHub Copilot".
+Pour cela, sélectionnez l'ensemble de la méthode `findUserFeed`, faites un clic-droit sur la sélection et choisissez "Generate Docs" dans le menu "GitHub Copilot".
 Le chat devrait vous répondre le bloc de code que vous avez sélectionné, précédé d'un bloc de documentation au format Javadoc.
 Prenez le temps de lire la documentation générée et de la comparer avec ce que fait réellement la méthode.
 
@@ -49,7 +49,7 @@ Vous devriez avoir un résultat qui ressemble à ceci :
   }
 ```
 
-Vous pouvez par la suite sélectionner la méthode unfavoriteArticle, puis dans le chat peser sur la flèche du haut pour réutiliser le dernier message
+Vous pouvez par la suite sélectionner la méthode unfavoriteArticle, puis dans le chat, appuyer sur la flèche du haut pour réutiliser le dernier message.
 
 Le résultat devrait ressembler à ceci :
 
@@ -76,7 +76,7 @@ Le résultat devrait ressembler à ceci :
 ## Mauvaise initialisation de HashMap avec duplication
 
 Dans le fichier ArticleDataFetcher.java, nous allons corriger les trois mauvaises initialisations de HashMap qui sont dupliquées.
-Pour se faire sélectionner la ligne 300 à 357, puis dans le chat de Github Copilot demandez lui par exemple:
+Pour se faire, sélectionnez la ligne 300 à 357, puis dans le chat de Github Copilot demandez lui par exemple:
 
 ```
 move initialization of hashmap in method
