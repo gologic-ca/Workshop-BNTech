@@ -19,6 +19,84 @@ Pour cela, sélectionnez l'ensemble de la méthode `findUserFeed`, faites un cli
 Le chat devrait vous répondre le bloc de code que vous avez sélectionné, précédé d'un bloc de documentation au format Javadoc.
 Prenez le temps de lire la documentation générée et de la comparer avec ce que fait réellement la méthode.
 
+### Réduire la complexité
+
+Pour réduire la complexité de la méthode `findUserFeed`, nous allons demander à GitHub Copilot de la découper en plusieurs méthodes, chacune ayant une responsabilité unique.
+Pour cela, sélectionnez l'ensemble de la méthode `findUserFeed`, ouvrez le chat et demandez lui quelque chose comme:
+
+```
+/fix reduce cognitive complexity of this method
+```
+
+Vous devriez obtenir une réponse qui ressemble à ceci:
+
+```java
+public ArticleDataList findUserFeed(User user, Page page) {
+    List<String> followedUsers = userRelationshipQueryService.followedUsers(user.getId());
+    if (followedUsers.isEmpty()) {
+      return new ArticleDataList(new ArrayList<>(), 0);
+    } else {
+      List<ArticleData> articles = articleReadService.findArticlesOfAuthors(followedUsers, page);
+      setFavoriteCounts(articles);
+    if (user != null) {
+      setIsFavorite(articles, user);
+      setFollowingAuthors(articles, user);
+    }
+    int count = articleReadService.countFeedSize(followedUsers);
+    return new ArticleDataList(articles, count);
+}
+
+
+private void setFavoriteCounts(List<ArticleData> articles) {
+    List<String> articleIds = articles.stream().map(ArticleData::getId).collect(Collectors.toList());
+    List<ArticleFavoriteCount> favoritesCounts = articleFavoritesReadService.articlesFavoriteCount(articleIds);
+    Map<String, Integer> countMap = favoritesCounts.stream().collect(Collectors.toMap(ArticleFavoriteCount::getId, ArticleFavoriteCount::getCount));
+    articles.forEach(articleData -> articleData.setFavoritesCount(countMap.get(articleData.getId())));
+}
+
+private void setFollowingAuthors(List<ArticleData> articles, User user) {
+    List<String> profileDataIds = articles.stream().filter(articleData -> articleData.getProfileData() != null).map(articleData -> articleData.getProfileData().getId()).collect(Collectors.toList());
+    Set<String> followingAuthors = userRelationshipQueryService.followingAuthors(user.getId(), profileDataIds);
+    articles.forEach(articleData -> {
+        if (followingAuthors.contains(articleData.getProfileData().getId())) {
+          articleData.getProfileData().setFollowing(true);
+        }
+    });
+}
+```
+
+Dans le cadre de l'exercice, c'est nous en préparant le workshop qui avons rendu la méthode complexe, en copiant le contenu des méthodes qui étaient appelées par `findUserFeed` directement dans la méthode.\
+On peut donc se placer dans un cas ou les méthodes que l'on veut appeler pour réduire la complexité existent déjà. Copilot devrait être capable de les trouver et de les appeler à la place, si on lui mentionne que les méthodes existent déjà.
+On peut donc modifier notre prompt pour utiliser quelque chose de la sorte:
+
+```
+/fix reduce cognitive complexity of this method using existing methods in the class
+```
+
+Voici le résultat que vous devriez obtenir:
+
+```java
+public ArticleDataList findUserFeed(User user, Page page) {
+    List<String> followedUsers = userRelationshipQueryService.followedUsers(user.getId());
+    if (followedUsers.isEmpty()) {
+      return new ArticleDataList(new ArrayList<>(), 0);
+    } else {
+      List<ArticleData> articles = articleReadService.findArticlesOfAuthors(followedUsers, page);
+      setFavoriteCount(articles);
+    if (user != null) {
+      setIsFavorite(articles, user);
+      setIsFollowingAuthor(articles, user);
+    }
+    int count = articleReadService.countFeedSize(followedUsers);
+    return new ArticleDataList(articles, count);
+}
+```
+
+### Valider la solution
+
+Maintenant que nous avons refactoré la méthode et que ça comlexité est réduite, il nous reste simplement à valider que nous n'avons pas modifier la logique.
+Pour cela vous pouvez exécuter les tests unitaires de la classe `ArticleQueryServiceTest` pour valider que la méthode `findUserFeed` fonctionne toujours correctement.
+
 ## Résoudre les problèmes dans ArticleFavoriteApi
 
 Si vous allez dans la classe `ArticleFavoriteApi.java`, plusieurs enjeux de maintenabilité sont présent. Sélectionner le message d'erreur de SonarLint comme sur la capture d'écran suivante: 
