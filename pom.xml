@@ -23,6 +23,13 @@
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+        <sonar.projectKey>Workshop-dette-technique</sonar.projectKey>
+        <sonar.organization>Workshop-dette-technique</sonar.organization>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.login>sqp_1af36f647da2f89630dcb0c7a25baf13b17e1a34</sonar.login>
+        <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/reports/owasp-dependencyCheck/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+        <sonar.dependencyCheck.jsonReportPath>${project.build.directory}/reports/owasp-dependencyCheck/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
+        <sonar.coverage.exclusions>src/main/java/io/spring/graphql/**/*</sonar.coverage.exclusions>
     </properties>
 
 	<dependencies>
@@ -54,6 +61,11 @@
             <groupId>com.netflix.graphql.dgs</groupId>
             <artifactId>graphql-dgs-spring-boot-starter</artifactId>
             <version>4.9.21</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.antlr</groupId>
+    		<artifactId>antlr4-runtime</artifactId>
+    		<version>4.9.2</version>
         </dependency>
         <!-- Flyway -->
         <dependency>
@@ -99,7 +111,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>4.5.1</version>
+            <version>4.5.1</version>            
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -236,14 +248,11 @@
                     <schemaPaths>
                         <param>${project.basedir}/src/main/resources/schema/schema.graphqls</param>
                     </schemaPaths>
-                    <!--
-                    <generateIsGetterForPrimitiveBooleanFields>true</generateIsGetterForPrimitiveBooleanFields>
-                    <addGeneratedAnnotation>true</addGeneratedAnnotation>
-                    <generateDocs>true</generateDocs>
-                    <typeMappingPropertiesFiles>
-                        <typeMappingPropertiesFile>graphql/common-type-mappings.properties</typeMappingPropertiesFile>
-                    </typeMappingPropertiesFiles>
-                    -->
+                    <typeMapping>
+					    <PageInfo>graphql.relay.PageInfo</PageInfo>
+					</typeMapping>
+					<generateIsGetterForPrimitiveBooleanFields>true</generateIsGetterForPrimitiveBooleanFields>
+					<addGeneratedAnnotation>true</addGeneratedAnnotation>
                 </configuration>
             </plugin>
             <plugin>            
@@ -286,17 +295,6 @@
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
                         <version>3.9.1.2184</version>
-                        <configuration>
-                            <properties>
-                                <sonar.projectKey>Workshop-dette-technique</sonar.projectKey>
-                                <sonar.organization>Workshop-dette-technique</sonar.organization>
-                                <sonar.host.url>http://localhost:9000</sonar.host.url>
-                                <sonar.login>sqp_1af36f647da2f89630dcb0c7a25baf13b17e1a34</sonar.login>
-                                <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/reports/owasp-dependencyCheck/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-                                <sonar.dependencyCheck.jsonReportPath>${project.build.directory}/reports/owasp-dependencyCheck/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
-                                <sonar.coverage.exclusions>src/main/java/io/spring/graphql/**/*</sonar.coverage.exclusions>
-                            </properties>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
