@@ -3,6 +3,8 @@
 /bin/
 !gradle/wrapper/gradle-wrapper.jar
 *.db
+/target/
+/.mvn/
 
 ### STS ###
 .apt_generated
