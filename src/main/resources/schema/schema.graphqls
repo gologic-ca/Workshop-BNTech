@@ -92,13 +92,6 @@ type DeletionStatus {
     success: Boolean!
 }
 
-type PageInfo {
-    endCursor: String
-    hasNextPage: Boolean!
-    hasPreviousPage: Boolean!
-    startCursor: String
-}
-
 ### Profile
 type Profile {
     username: String!
