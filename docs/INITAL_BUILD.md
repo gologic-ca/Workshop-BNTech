@@ -39,7 +39,7 @@ set JAVA_HOME=C:\path\to\jdk17
 
 Valider le bonne exécution de gradle wrapper, la version de gradle et du JDK utilisé par le projet en exécutant la commande suivante:
 ```shell
-./gradlew -v
+mvn version
 ```
 
 ## Valider la compilation du projet
@@ -47,7 +47,7 @@ Valider le bonne exécution de gradle wrapper, la version de gradle et du JDK ut
 Par la suite, vous devez exécuter la commande: 
 
 ```shell
-./gradlew clean build
+mvn install
 ```
 
 ## Félicitation !

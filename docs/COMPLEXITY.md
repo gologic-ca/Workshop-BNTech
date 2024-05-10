@@ -189,5 +189,5 @@ Ici, nous avons un exemple où les deux outils peuvent travailler ensemble pour 
 Vous avez maintenant une application beaucoup plus robuste et votre équipe a compris comment utiliser adéquatement Github Copilot pour améliorer la qualité du code. Si vous avez du temps, vous pouvez exécuter pour admirer votre travail:
 
 ```bash
-./gradlew test dependencyCheckAnalyze sonar 
+mvn install sonar:sonar
 ```

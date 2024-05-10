@@ -200,7 +200,7 @@ Finalement à la ligne 76 remplacer la version de MyBatis Test par:
 Ensuite compilez le projet avec la commande suivante:
 
 ```
-./gradlew clean build
+mvn compile
 ```
 
 Avec tous ces changements vous devriez pouvoir build le projet sans erreurs !
@@ -210,7 +210,7 @@ Avec tous ces changements vous devriez pouvoir build le projet sans erreurs !
 Lancez une nouvelle analyse Sonar après la migration pour voir la qualité du code:
 
 ```
-./gradlew test dependencyCheckAnalyze sonar
+mvn install sonar:sonar
 ```
 
 Une fois faites, vous pouvez retourner sur la page "overview" du serveur sonar, et les données de l'analyse devraient être disponibles.

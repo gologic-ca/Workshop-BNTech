@@ -53,7 +53,7 @@ Avant de lancer l'analyse, assurez-vous que vous avec bien copié **votre token 
 Ensuite exécutez la commande suivante dans un terminal ouvert au niveau du projet java:
 
 ```
-./gradlew test dependencyCheckAnalyze sonar
+mvn sonar:sonar
 ```
 
 L'analyse devrait prendre quelques minutes tout au plus à s'exécuter.

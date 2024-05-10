@@ -162,7 +162,7 @@ Il vous proposera alors un code de correction que vous pourrez copier-coller dan
 Les problèmes qui empêchaient le *gating* de passer sont maintenant corrigés. Si vous êtes limités par le temps, exécuter pour admirer votre travail:
 
 ```bash
-./gradlew test dependencyCheckAnalyze sonar 
+mvn install sonar:sonar
 ```
 
 Sinon, on peut passer à l'étape suivante, où nous allons faire des exercices pour améliorer encore plus la qualité du code: [Mise en place de la méthode "Clean as you code"](COMPLEXITY.md)

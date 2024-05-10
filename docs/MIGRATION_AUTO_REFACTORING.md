@@ -18,18 +18,32 @@ pour une multitude de frameworks et de langages de  programmation( Java, Terrafo
 
 Notre environnement est enfin prêt pour lancer la migration de notre application vers Springboot 3. Pour cela, nous allons utiliser OpenRewrite, un outil de refactoring automatisé qui nous permettra de migrer notre application en quelques étapes simples.
 
-La configuration de l'outil est déjà faite dans le projet avec le plugin OpenRewrite dans le build.gradle en spécifiant la recette suivante à appliquer: 
+Afin de pouvoir déclencher la migration, nous allons devoir ajouter le plugin OpenRewrite à notre projet. Pour cela après la ligne 273 du `pom.xml` ajoutez:
+
+```xml
+            <plugin>
+                <groupId>org.openrewrite.maven</groupId>
+                <artifactId>rewrite-maven-plugin</artifactId>
+                <version>5.30.0</version>
+                <configuration>
+                    <activeRecipes>
+                        <recipe>org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2</recipe>
+                    </activeRecipes>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.openrewrite.recipe</groupId>
+                        <artifactId>rewrite-spring</artifactId>
+                        <version>5.9.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+```
+
+Puis, déclenchez la tâche de migration en exécutant la tâche suivante: 
 
 ```
-rewrite {
-  activeRecipe("org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_2")
-}
-```
-
-Déclenchez la tâche de migration en exécutant la tâche suivante: 
-
-```
-./gradlew rewriteRun
+mvn rewrite:run
 ```
 
 ### Build du projet après la migration
@@ -39,7 +53,7 @@ Lorsque la migration a été complétée avec succès, nous allons essayer de bu
 Pour cela exécutez la commande suivante:
 
 ```
-./gradlew clean build
+mvn compile
 ```
 
 À ce stade vous avez des erreurs de compilation car les recettes de migration appliquées modifient le code par rapport aux versions des cadres de travail utilisés mais OpenRewrite ne peut pas migrer le code spécifique à l'application.
