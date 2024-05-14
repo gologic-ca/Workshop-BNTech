@@ -30,6 +30,7 @@
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/reports/owasp-dependencyCheck/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
         <sonar.dependencyCheck.jsonReportPath>${project.build.directory}/reports/owasp-dependencyCheck/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
         <sonar.coverage.exclusions>src/main/java/io/spring/graphql/**/*</sonar.coverage.exclusions>
+        <myBatis.version>2.2.2</myBatis.version> 
     </properties>
 
 	<dependencies>
@@ -54,7 +55,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.2.2</version>
+            <version>${myBatis.version}</version>
         </dependency>
         <!-- GraphQL DGS -->
         <dependency>
@@ -145,14 +146,8 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter-test</artifactId>
-            <version>2.2.2</version>
+            <version>${myBatis.version}</version>
             <scope>test</scope>
-        </dependency>
-        <!-- OpenRewrite -->
-        <dependency>
-            <groupId>org.openrewrite.recipe</groupId>
-            <artifactId>rewrite-spring</artifactId>
-            <version>5.8.0</version>
         </dependency>
     </dependencies>
     
@@ -223,14 +218,6 @@
                     <outputDirectory>build/reports/sbom</outputDirectory>
                 </configuration>
             </plugin>
-
-            <!-- OpenRewrite Maven plugin -->
-            <plugin>
-                <groupId>org.openrewrite.maven</groupId>
-                <artifactId>rewrite-maven-plugin</artifactId>
-                <version>5.9.1</version>
-            </plugin>
-
             <!-- GraphQL CodeGen Maven plugin -->
             <plugin>
                 <groupId>io.github.deweyjose</groupId>
